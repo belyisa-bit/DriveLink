@@ -1,0 +1,28 @@
+﻿# IDEs e Editores
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Ambiente (.env)
+.env
+!.env.example
+
+# Node / Frontend
+node_modules/
+dist/
+coverage/
+.vite/
+
+# Java / Maven / Backend
+target/
+*.class
+*.jar
+*.war
+
+# Logs
+*.log

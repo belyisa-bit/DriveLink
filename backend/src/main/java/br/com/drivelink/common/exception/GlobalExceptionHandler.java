@@ -1,4 +1,4 @@
-﻿package br.com.drivelink.common.exception;
+package br.com.drivelink.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

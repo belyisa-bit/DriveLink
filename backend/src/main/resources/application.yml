@@ -1,7 +1,5 @@
 ﻿spring:
-  profiles:
-    active: dev
-  application:
-    name: drivelink-backend
-  jackson:
-    default-property-inclusion: non_null
+  datasource:
+    url: jdbc:postgresql://localhost:5433/drivelink
+    username: postgres
+    password: postgres

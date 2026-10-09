@@ -1,4 +1,4 @@
-﻿package br.com.drivelink;
+package br.com.drivelink;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-﻿package br.com.drivelink.vehicle.domain;
+package br.com.drivelink.vehicle.domain;
 
 import br.com.drivelink.vehicle.domain.enums.*;
 import jakarta.persistence.*;

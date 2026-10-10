@@ -50,6 +50,6 @@ public class WebSecurityConfig {
                 .info(new Info()
                         .title("Drivelink API")
                         .version("1.0.0")
-                        .description("API REST da vitrine e gestão de veículos Drivelink"));
+                        .description("API REST da vitrine e gestÃ£o de veÃ­culos Drivelink"));
     }
 }

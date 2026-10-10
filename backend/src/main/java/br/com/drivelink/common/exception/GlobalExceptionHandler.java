@@ -16,8 +16,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationErrors(MethodArgumentNotValidException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Erro de validação nos campos informados.");
-        problemDetail.setTitle("Requisição Inválida");
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Erro de validaÃ§Ã£o nos campos informados.");
+        problemDetail.setTitle("RequisiÃ§Ã£o InvÃ¡lida");
         problemDetail.setType(URI.create("https://drivelink.com.br/errors/validation-error"));
         problemDetail.setProperty("timestamp", Instant.now());
 

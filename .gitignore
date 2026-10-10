@@ -8,9 +8,8 @@
 .DS_Store
 Thumbs.db
 
-# Ambiente (.env)
-.env
-!.env.example
+.env.exemplo
+.env*
 
 # Node / Frontend
 node_modules/

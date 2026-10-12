@@ -24,7 +24,7 @@ public class WebSecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**").permitAll()
+                .requestMatchers( "/api/v1/**", "/leads", "/leads/**","/swagger-ui/**","/v3/api-docs/**","/actuator/**").permitAll()
                 .anyRequest().authenticated()
             );
 

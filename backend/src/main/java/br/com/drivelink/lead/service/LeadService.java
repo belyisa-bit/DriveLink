@@ -6,6 +6,7 @@ import br.com.drivelink.lead.domain.enums.LeadStatus;
 import br.com.drivelink.lead.dto.CreateLeadRequest;
 import br.com.drivelink.lead.dto.LeadResponse;
 import br.com.drivelink.lead.repository.LeadRepository;
+import br.com.drivelink.lead.service.LeadNotificationService;
 import br.com.drivelink.vehicle.domain.Vehicle;
 import br.com.drivelink.vehicle.repository.VehicleRepository;
 
@@ -21,13 +22,17 @@ public class LeadService {
 
     private final LeadRepository leadRepository;
     private final VehicleRepository vehicleRepository;
+    private final LeadNotificationService leadNotificationService;
 
-    public LeadService(
-            LeadRepository leadRepository,
-            VehicleRepository vehicleRepository) {
-        this.leadRepository = leadRepository;
-        this.vehicleRepository = vehicleRepository;
-    }
+   public LeadService(
+        LeadRepository leadRepository,
+        VehicleRepository vehicleRepository,
+        LeadNotificationService leadNotificationService) {
+
+    this.leadRepository = leadRepository;
+    this.vehicleRepository = vehicleRepository;
+    this.leadNotificationService = leadNotificationService;
+}
 
     @Transactional
     public LeadResponse create(CreateLeadRequest request) {
@@ -65,6 +70,7 @@ public class LeadService {
             .build();
 
         Lead savedLead = leadRepository.save(lead);
+        leadNotificationService.enviarNovoLead(savedLead);
 
         return LeadResponse.from(savedLead);
     }

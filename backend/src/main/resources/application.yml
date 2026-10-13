@@ -3,3 +3,21 @@
     url: jdbc:postgresql://localhost:5433/drivelink
     username: postgres
     password: postgres
+
+spring:
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+app:
+  mail:
+    from: ${MAIL_FROM:${MAIL_USERNAME:}}
+    to: ${MAIL_TO:}

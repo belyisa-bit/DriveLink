@@ -1,8 +1,12 @@
 ﻿spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/drivelink
+    url: jdbc:postgresql://localhost:5432/drivelink
     username: postgres
-    password: postgres
+    password: gabri$
+
+  flyway:
+    out-of-order: true
+
 
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}

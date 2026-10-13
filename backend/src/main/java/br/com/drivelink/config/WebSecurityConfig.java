@@ -87,4 +87,11 @@ public class WebSecurityConfig {
                 .version("1.0.0")
                 .description("API REST da vitrine e gestão de veículos Drivelink"));
     }
+
+    @Bean
+public org.springframework.security.authentication.AuthenticationManager authenticationManager(
+        org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration configuration)
+        throws Exception {
+    return configuration.getAuthenticationManager();
+}
 }

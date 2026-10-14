@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const variants = {
   primary: 'border-brand bg-brand text-white hover:border-brand-hover hover:bg-brand-hover',
   outline: 'border-brand bg-transparent text-brand hover:bg-brand-light',
+  inverse: 'border-white bg-white text-brand hover:border-brand-light hover:bg-brand-light',
 };
 
 export const Button = forwardRef(function Button(

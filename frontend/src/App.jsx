@@ -26,6 +26,7 @@ export function App() {
           <Route path="/" element={<HomePage />} />
           {[
             ['/estoque', 'Estoque'],
+            ['/estoque/:slug', 'Detalhes do veículo'],
             ['/destaques', 'Destaques'],
             ['/sobre', 'Sobre'],
             ['/contato', 'Contato'],

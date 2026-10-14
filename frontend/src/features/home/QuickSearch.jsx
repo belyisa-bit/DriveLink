@@ -4,7 +4,7 @@ import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/Button';
 import { Select } from '../../components/Select';
-import { getBrandModels, getVehicleFilters, usingMockFilters } from './vehicleFilters';
+import { getBrandModels, getVehicleFilters } from './vehicleFilters';
 
 const priceRanges = [
   { value: '', label: 'Qualquer valor' },
@@ -54,7 +54,6 @@ export function QuickSearch() {
         <Button type="submit" className="w-full"><Search size={19} aria-hidden="true" />Buscar veículos</Button>
       </div>
       {!brand && <p className="mt-3 text-xs text-slate-600">Selecione uma marca para consultar os modelos disponíveis.</p>}
-      {usingMockFilters && <p className="mt-3 text-xs text-slate-600">Demonstração com marcas e modelos simulados.</p>}
       {(filters.isError || (brand && models.isError)) && (
         <div role="status" className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-600">
           <p>{filters.isError ? 'Não foi possível carregar as marcas. Você ainda pode buscar por preço.' : 'Não foi possível carregar os modelos. Você ainda pode buscar por marca e preço.'}</p>

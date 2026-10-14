@@ -10,7 +10,7 @@ Crie `frontend/.env.development.local` com:
 VITE_USE_MOCK_FILTERS=true
 ```
 
-Reinicie o Vite. Marca e Modelo usam exemplos do protótipo, sem chamar a API. A interface identifica esse modo como demonstração. O arquivo local é ignorado pelo Git. O build de produção sempre usa a API, mesmo se essa variável estiver ativa.
+Reinicie o Vite. Marca e Modelo usam dados locais de exemplo, sem chamar a API. O arquivo local é ignorado pelo Git. O build de produção sempre usa a API, mesmo se essa variável estiver ativa.
 
 ## Integração pendente
 

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { CtaBanner } from './components/CtaBanner';
+import { ToastProvider } from './components/Toast';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,6 +17,7 @@ const queryClient = new QueryClient({
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ToastProvider>
       <BrowserRouter>
         <div className="flex min-h-screen flex-col">
         <Header />
@@ -54,6 +56,7 @@ export function App() {
         <Footer />
         </div>
       </BrowserRouter>
+      </ToastProvider>
     </QueryClientProvider>
   );
 }

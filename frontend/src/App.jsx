@@ -1,6 +1,7 @@
 ﻿import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
+import { Footer } from './components/Footer';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,8 +16,9 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <div className="flex min-h-screen flex-col">
         <Header />
-        <main id="main-content">
+        <main id="main-content" className="flex-1">
         <Routes>
           <Route path="/" element={
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-4">
@@ -43,6 +45,8 @@ export function App() {
           <Route path="*" element={<p className="p-10 text-center">Página não encontrada.</p>} />
         </Routes>
         </main>
+        <Footer />
+        </div>
       </BrowserRouter>
     </QueryClientProvider>
   );

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search } from 'lucide-react';
+import { Car, LayoutGrid, Search, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/Button';
 import { Select } from '../../components/Select';
@@ -40,15 +40,15 @@ export function QuickSearch() {
   return (
     <form onSubmit={handleSubmit} aria-label="Busca rápida de veículos" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
       <div className="grid items-end gap-5 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
-        <Select label="Marca" name="brand" value={brand} disabled={filters.isPending || filters.isError} onChange={(event) => { setBrand(event.target.value); setModel(''); }}>
+        <Select label="Marca" icon={Car} name="brand" value={brand} disabled={filters.isPending || filters.isError} onChange={(event) => { setBrand(event.target.value); setModel(''); }}>
           <option value="">{filters.isPending ? 'Carregando marcas…' : 'Todas'}</option>
           {(filters.data?.brands || []).map((value) => <option key={value} value={value}>{value}</option>)}
         </Select>
-        <Select label="Modelo" name="model" value={model} disabled={!brand || models.isPending || models.isError} onChange={(event) => setModel(event.target.value)}>
+        <Select label="Modelo" icon={LayoutGrid} name="model" value={model} disabled={!brand || models.isPending || models.isError} onChange={(event) => setModel(event.target.value)}>
           <option value="">{brand && models.isPending ? 'Carregando modelos…' : 'Todos'}</option>
           {(models.data || []).map((value) => <option key={value} value={value}>{value}</option>)}
         </Select>
-        <Select label="Faixa de preço" name="priceRange" value={priceRange} onChange={(event) => setPriceRange(event.target.value)}>
+        <Select label="Faixa de preço" icon={Tag} name="priceRange" value={priceRange} onChange={(event) => setPriceRange(event.target.value)}>
           {priceRanges.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
         </Select>
         <Button type="submit" className="w-full"><Search size={19} aria-hidden="true" />Buscar veículos</Button>

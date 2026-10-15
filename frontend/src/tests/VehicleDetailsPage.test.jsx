@@ -246,3 +246,21 @@ it('oferece retorno ao estoque em URLs inexistentes e nova tentativa em falha de
     await screen.findByRole('heading', { level: 1, name: 'Fiat Argo' }),
   ).toBeInTheDocument();
 });
+
+it('mantém o detalhe disponível se opções ou sugestões falharem', async () => {
+  getVehicleVariants.mockRejectedValueOnce(new Error('offline'));
+  getSimilarVehicles.mockRejectedValueOnce(new Error('offline'));
+  renderPage(fixtures[0].slug);
+  expect(
+    await screen.findByRole('heading', { level: 1, name: 'Fiat Argo' }),
+  ).toBeInTheDocument();
+  expect(
+    await screen.findByRole('button', { name: 'Tentar carregar opções' }),
+  ).toBeInTheDocument();
+  expect(
+    await screen.findByRole('button', { name: 'Tentar carregar sugestões' }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: 'Especificações' }),
+  ).toBeInTheDocument();
+});

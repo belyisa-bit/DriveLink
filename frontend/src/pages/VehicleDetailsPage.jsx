@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+﻿import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { Button } from '../components/Button';
@@ -10,6 +10,7 @@ import { VehicleSummary } from '../features/vehicle-detail/VehicleSummary';
 import { VehicleSpecifications } from '../features/vehicle-detail/VehicleSpecifications';
 import { VehicleVariants } from '../features/vehicle-detail/VehicleVariants';
 import { VehicleInterestForm } from '../features/vehicle-detail/VehicleInterestForm';
+import { SimilarVehicles } from '../features/vehicle-detail/SimilarVehicles';
 import { getVehicleDetail } from '../features/vehicle-detail/vehicleDetailsApi';
 
 export function VehicleDetailsPage() {
@@ -92,6 +93,7 @@ export function VehicleDetailsPage() {
         </aside>
         <VehicleSpecifications vehicle={vehicle} />
       </div>
+      <SimilarVehicles vehicle={vehicle} />
     </div>
   );
 }

@@ -22,7 +22,7 @@ it('mantém o teste do formulário local sem enviar dados ou IDs fictícios ao b
 it('resolve os 362 veículos e as opções dos 44 modelos sem alterar o estoque nem chamar a API', async () => {
   vi.stubEnv('VITE_USE_MOCK_CATALOG', 'true');
   vi.resetModules();
-  const { getVehicleDetail, getVehicleVariants } =
+  const { getVehicleDetail, getVehicleVariants, getSimilarVehicles } =
     await import('../features/vehicle-detail/vehicleDetailsApi');
   for (const vehicle of mockCatalogVehicles) {
     const detail = await getVehicleDetail(vehicle.slug);
@@ -42,6 +42,26 @@ it('resolve os 362 veículos e as opções dos 44 modelos sem alterar o estoque 
       expect(variants).toHaveLength(years.length);
     }
   }
+  const similar = await getSimilarVehicles(mockCatalogVehicles[0]);
+  expect(similar.length).toBeLessThanOrEqual(3);
+  expect(
+    new Set(similar.map((item) => `${item.brand}|${item.model}`)).size,
+  ).toBe(similar.length);
+  expect(
+    similar.every(
+      (item) =>
+        item.brand === mockCatalogVehicles[0].brand &&
+        Math.abs(item.price - mockCatalogVehicles[0].price) <=
+          mockCatalogVehicles[0].price * 0.25,
+    ),
+  ).toBe(true);
+  expect(
+    similar.some(
+      (item) =>
+        item.brand === mockCatalogVehicles[0].brand &&
+        item.model === mockCatalogVehicles[0].model,
+    ),
+  ).toBe(false);
   await expect(getVehicleDetail('nao-existe')).rejects.toMatchObject({
     response: { status: 404 },
   });

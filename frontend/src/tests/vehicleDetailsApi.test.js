@@ -2,6 +2,7 @@ import { api } from '../lib/axios';
 import {
   getVehicleDetail,
   getVehicleVariants,
+  getSimilarVehicles,
 } from '../features/vehicle-detail/vehicleDetailsApi';
 import { sendVehicleInterest } from '../features/vehicle-detail/vehicleLeadApi';
 
@@ -87,4 +88,81 @@ it('reúne todas as páginas e usa as cores do detalhe apenas de unidades dispon
     expect.anything(),
   );
   expect(api.get).not.toHaveBeenCalledWith('/vehicles/mobi', expect.anything());
+});
+
+it('exclui o carro atual, modelos repetidos e indisponíveis das sugestões', async () => {
+  const vehicle = { slug: 'argo', brand: 'Fiat', model: 'Argo', price: 80000 };
+  api.get.mockResolvedValueOnce({
+    data: [
+      { ...vehicle, status: 'DISPONIVEL' },
+      { ...vehicle, slug: 'argo-outro', status: 'DISPONIVEL' },
+      {
+        brand: 'Fiat',
+        model: 'Mobi',
+        slug: 'mobi',
+        status: 'DISPONIVEL',
+        price: 70000,
+      },
+      {
+        brand: 'Fiat',
+        model: 'Mobi',
+        slug: 'mobi-2',
+        status: 'DISPONIVEL',
+        price: 65000,
+      },
+      { brand: 'Fiat', model: 'Toro', slug: 'toro', status: 'VENDIDO' },
+    ],
+  });
+  expect((await getSimilarVehicles(vehicle)).map((item) => item.slug)).toEqual([
+    'mobi',
+  ]);
+  expect(api.get).toHaveBeenCalledWith(
+    '/vehicles/argo/similar',
+    expect.anything(),
+  );
+});
+
+it('prioriza marca e carroceria, limita o preço e escolhe a unidade mais próxima de cada modelo', async () => {
+  const vehicle = {
+    slug: 'base',
+    brand: 'Fiat',
+    model: 'Base',
+    bodyType: 'SUV',
+    price: 100000,
+  };
+  const car = (slug, extra = {}) => ({
+    slug,
+    brand: 'Fiat',
+    model: slug,
+    bodyType: 'SUV',
+    price: 100000,
+    status: 'DISPONIVEL',
+    ...extra,
+  });
+  api.get.mockResolvedValueOnce({
+    data: [
+      car('distante', { price: 125001 }),
+      car('mobi', { bodyType: 'HATCHBACK', price: 100000 }),
+      car('outro-suv', { brand: 'Jeep', price: 101000 }),
+      car('toro-cara', { model: 'Toro', price: 110000 }),
+      car('toro-proxima', { model: 'Toro', price: 99000 }),
+      car('sem-relacao', { brand: 'Honda', bodyType: 'SEDAN' }),
+      car('sem-preco', { price: null }),
+      null,
+    ],
+  });
+  expect((await getSimilarVehicles(vehicle)).map((item) => item.slug)).toEqual([
+    'toro-proxima',
+    'mobi',
+    'outro-suv',
+  ]);
+});
+
+it('não inventa sugestões sem preço e trata uma resposta inválida como erro', async () => {
+  api.get.mockResolvedValueOnce({ data: [] });
+  expect(await getSimilarVehicles({ slug: 'base' })).toEqual([]);
+  api.get.mockResolvedValueOnce({ data: {} });
+  await expect(
+    getSimilarVehicles({ slug: 'base', price: 100000 }),
+  ).rejects.toThrow('Resposta inválida');
 });

@@ -1,10 +1,13 @@
-﻿import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { Button } from '../components/Button';
+import { Card } from '../components/Card';
 import { Skeleton } from '../components/Skeleton';
 import { VehicleBreadcrumb } from '../features/vehicle-detail/VehicleBreadcrumb';
 import { VehicleGallery } from '../features/vehicle-detail/VehicleGallery';
+import { VehicleSummary } from '../features/vehicle-detail/VehicleSummary';
+import { VehicleVariants } from '../features/vehicle-detail/VehicleVariants';
 import { getVehicleDetail } from '../features/vehicle-detail/vehicleDetailsApi';
 
 export function VehicleDetailsPage() {
@@ -73,8 +76,18 @@ export function VehicleDetailsPage() {
   return (
     <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
       <VehicleBreadcrumb vehicle={vehicle} />
-      <h1 className="sr-only">{vehicle.brand} {vehicle.model}</h1>
-      <VehicleGallery key={slug} vehicle={vehicle} />
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-8">
+        <VehicleGallery key={slug} vehicle={vehicle} />
+        <aside
+          aria-label="Opções e atendimento"
+          className="space-y-6 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+        >
+          <Card className="sm:p-6">
+            <VehicleSummary vehicle={vehicle} />
+            <VehicleVariants vehicle={vehicle} />
+          </Card>
+        </aside>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { catalogSuggestions } from './catalogSuggestions';
 import { mockFeaturedVehicles } from '../home/mockFeaturedVehicles';
 import { getCatalogPhoto } from './catalogPhotos';
+import { getCatalogTransmission } from './catalogTransmissions';
+import { getCatalogFuel } from './catalogFuels';
 
 // Valores exclusivamente fictícios, usados para testar todas as faixas de preço.
 // A base é do ano mais recente de cada modelo na lista fornecida.
@@ -60,6 +62,8 @@ for (const [brand, models] of Object.entries(catalogSuggestions)) {
         brand,
         model,
         year,
+        transmission: getCatalogTransmission(brand, model, year),
+        fuel: getCatalogFuel(brand, model, year),
         color: photo?.color || null,
         slug: example?.slug || slugify(`${brand}-${model}-${year}`),
         price: example?.price ?? Math.round(estimatedPrice / 1000) * 1000 + 900,

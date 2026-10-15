@@ -1,9 +1,8 @@
 ﻿import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { HomePage } from './pages/HomePage';
-import { StockPage } from './pages/StockPage';
+import { AppRoutes } from './routes/AppRoutes';
 import { ToastProvider } from './components/Toast';
 
 const queryClient = new QueryClient({
@@ -19,33 +18,15 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
-      <BrowserRouter>
-        <div className="flex min-h-screen flex-col">
-        <Header />
-        <main id="main-content" className="flex-1">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/estoque" element={<StockPage />} />
-          <Route path="/destaques" element={<Navigate to="/#destaques" replace />} />
-          {[
-            ['/estoque/:slug', 'Detalhes do veículo'],
-            ['/sobre', 'Sobre'],
-            ['/contato', 'Contato'],
-            ['/atendimento', 'Quero ser atendido'],
-          ].map(([path, title]) => (
-            <Route key={path} path={path} element={
-              <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-                <h1 className="text-3xl font-bold text-slate-950">{title}</h1>
-                <p className="mt-3 text-slate-600">Página em desenvolvimento.</p>
-              </div>
-            } />
-          ))}
-          <Route path="*" element={<p className="p-10 text-center">Página não encontrada.</p>} />
-        </Routes>
-        </main>
-        <Footer />
-        </div>
-      </BrowserRouter>
+        <BrowserRouter>
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <main id="main-content" className="flex-1">
+              <AppRoutes />
+            </main>
+            <Footer />
+          </div>
+        </BrowserRouter>
       </ToastProvider>
     </QueryClientProvider>
   );

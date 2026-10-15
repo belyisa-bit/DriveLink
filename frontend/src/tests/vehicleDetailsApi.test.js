@@ -3,11 +3,37 @@ import {
   getVehicleDetail,
   getVehicleVariants,
 } from '../features/vehicle-detail/vehicleDetailsApi';
+import { sendVehicleInterest } from '../features/vehicle-detail/vehicleLeadApi';
 
 vi.mock('../lib/axios', () => ({ api: { get: vi.fn(), post: vi.fn() } }));
 beforeEach(() => {
   api.get.mockReset();
   api.post.mockReset();
+});
+
+it('envia o lead com a unidade escolhida e a origem DETALHE_VEICULO', async () => {
+  const values = {
+    name: 'Maria Silva',
+    phone: '11987654321',
+    email: 'maria@example.com',
+    contactPreference: 'WHATSAPP',
+    message: '',
+    lgpdConsent: true,
+  };
+  api.post.mockResolvedValue({ data: { id: 91 } });
+  expect(await sendVehicleInterest({ id: 12 }, values)).toEqual({
+    simulated: false,
+    id: 91,
+  });
+  expect(api.post).toHaveBeenCalledWith('/leads', {
+    ...values,
+    vehicleId: 12,
+    source: 'DETALHE_VEICULO',
+  });
+  await expect(
+    sendVehicleInterest({ id: 'catalog-1' }, values),
+  ).rejects.toThrow('Referência inválida');
+  expect(api.post).toHaveBeenCalledTimes(1);
 });
 
 it('consulta o slug codificado e rejeita uma resposta sem referência de veículo', async () => {

@@ -9,6 +9,7 @@ import { VehicleGallery } from '../features/vehicle-detail/VehicleGallery';
 import { VehicleSummary } from '../features/vehicle-detail/VehicleSummary';
 import { VehicleSpecifications } from '../features/vehicle-detail/VehicleSpecifications';
 import { VehicleVariants } from '../features/vehicle-detail/VehicleVariants';
+import { VehicleInterestForm } from '../features/vehicle-detail/VehicleInterestForm';
 import { getVehicleDetail } from '../features/vehicle-detail/vehicleDetailsApi';
 
 export function VehicleDetailsPage() {
@@ -87,6 +88,7 @@ export function VehicleDetailsPage() {
             <VehicleSummary vehicle={vehicle} />
             <VehicleVariants vehicle={vehicle} />
           </Card>
+          <VehicleInterestForm key={slug} vehicle={vehicle} />
         </aside>
         <VehicleSpecifications vehicle={vehicle} />
       </div>

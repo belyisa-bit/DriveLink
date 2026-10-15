@@ -32,4 +32,12 @@ Preços aceitam valores não negativos com até duas casas decimais; anos aceita
 
 O hook também lê e atualiza `page` como índice iniciado em zero, preservando filtros e ordem. A página inicial é representada pela ausência do parâmetro; páginas inválidas voltam ao índice zero. Busca, aplicação/limpeza de filtros e ordenação reiniciam a página. O parâmetro de página da interface não é enviado à consulta que agrega todas as unidades por modelo.
 
-Próxima etapa: paginação e refinamento dos estados de carregamento e vazio (DRIV-73).
+## Paginação e estados da listagem (DRIV-73)
+
+O catálogo mostra **10 modelos por página**, após agrupar e ordenar as unidades. Os 44 modelos locais ocupam cinco páginas, com quatro modelos na última. O contador geral continua informando o total de veículos e modelos encontrados; a navegação informa o intervalo de modelos exibidos.
+
+Os botões numéricos, Anterior e Próxima atualizam a query string, preservam os filtros e a ordem e levam a área de resultados à vista. Voltar/Avançar e links diretos restauram a página selecionada. A paginação não aparece quando os resultados cabem em uma página ou estão vazios. Os botões dos limites ficam desabilitados. Um índice maior que o número de páginas é corrigido para a última página disponível, substituindo a entrada inválida no histórico.
+
+A paginação é aplicada aos grupos já carregados: trocar de página não consulta novamente todo o estoque nem separa opções do mesmo modelo. A integração atual ainda agrega as páginas da API; um contrato de paginação por modelo será necessário caso o estoque cresça muito.
+
+Durante o carregamento são mostrados skeletons dos cards. Falhas permitem tentar novamente, e buscas sem resultados mantêm a mensagem para ajustar os filtros.

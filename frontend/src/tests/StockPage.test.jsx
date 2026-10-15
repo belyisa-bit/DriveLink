@@ -1,10 +1,12 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import { StockPage } from '../pages/StockPage';
 import { api } from '../lib/axios';
 import { searchMockCatalog, mockCatalogFilters } from '../features/catalog/mockCatalog';
 import { mockFeaturedVehicles } from '../features/home/mockFeaturedVehicles';
+import { mockCatalogVehicles } from '../features/catalog/mockCatalogVehicles';
+import { groupCatalogVehicles } from '../features/catalog/catalogGroups';
 
 const sampleDates = ['2026-09-01T12:00:00Z', '2026-10-01T12:00:00Z', '2026-09-15T12:00:00Z'];
 const testVehicles = mockFeaturedVehicles.map((vehicle, index) => ({ ...vehicle, createdAt: sampleDates[index] }));
@@ -163,4 +165,93 @@ describe('Busca no estoque', () => {
     expect(screen.getByTestId('query').textContent).toBe('?sortBy=price_asc');
   });
 
+  function useCompleteInventory() {
+    api.get.mockImplementation((url, { params }) => Promise.resolve({ data: url === '/vehicles/filters' ? mockCatalogFilters() : searchMockCatalog(params, mockCatalogVehicles) }));
+  }
+
+  it('mostra dez modelos por página e restaura a página pelo histórico sem buscar tudo novamente', async () => {
+    useCompleteInventory();
+    renderStock('/estoque?sortBy=price_asc');
+    await screen.findByRole('navigation', { name: 'Paginação do estoque' });
+    const names = groupCatalogVehicles(mockCatalogVehicles, 'price_asc').map((group) => `${group.brand} ${group.model}`);
+    const cardNames = () => screen.getAllByRole('article').map((card) => within(card).getByRole('heading').textContent);
+    expect(cardNames()).toEqual(names.slice(0, 10));
+    expect(screen.getByRole('button', { name: 'Página anterior' })).toBeDisabled();
+    const requests = api.get.mock.calls.length;
+    fireEvent.click(screen.getByRole('button', { name: 'Próxima página' }));
+    expect(cardNames()).toEqual(names.slice(10, 20));
+    expect(screen.getByTestId('query').textContent).toBe('?sortBy=price_asc&page=1');
+    expect(screen.getByRole('button', { name: 'Ir para a página 2' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByText('Mostrando 11–20 de 44 modelos')).toBeInTheDocument();
+    expect(api.get).toHaveBeenCalledTimes(requests);
+    fireEvent.click(screen.getByRole('button', { name: 'Voltar no histórico' }));
+    expect(cardNames()).toEqual(names.slice(0, 10));
+    fireEvent.click(screen.getByRole('button', { name: 'Avançar no histórico' }));
+    expect(cardNames()).toEqual(names.slice(10, 20));
+  });
+
+  it('abre diretamente a última página com os quatro modelos restantes e bloqueia avançar', async () => {
+    useCompleteInventory();
+    renderStock('/estoque?sortBy=price_asc&page=4');
+    await screen.findByRole('navigation', { name: 'Paginação do estoque' });
+    expect(screen.getAllByRole('article')).toHaveLength(4);
+    expect(screen.getByText('Mostrando 41–44 de 44 modelos')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Próxima página' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Página anterior' }));
+    expect(screen.getAllByRole('article')).toHaveLength(10);
+    expect(screen.getByTestId('query').textContent).toBe('?sortBy=price_asc&page=3');
+  });
+
+  it('reinicia a página ao buscar e oculta a paginação quando os resultados cabem em uma página', async () => {
+    useCompleteInventory();
+    renderStock('/estoque?sortBy=price_asc&page=2');
+    await screen.findByRole('navigation', { name: 'Paginação do estoque' });
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Toyota' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Buscar veículos' }));
+    await screen.findByRole('heading', { name: 'Toyota Corolla' });
+    expect(screen.getAllByRole('article')).toHaveLength(4);
+    expect(screen.queryByRole('navigation', { name: 'Paginação do estoque' })).not.toBeInTheDocument();
+    expect(screen.getByTestId('query').textContent).toBe('?sortBy=price_asc&search=Toyota');
+  });
+
+  it('corrige uma página fora do limite e não mostra paginação no estado vazio', async () => {
+    useCompleteInventory();
+    const view = renderStock('/estoque?page=999');
+    await screen.findByRole('navigation', { name: 'Paginação do estoque' });
+    await waitFor(() => expect(screen.getByTestId('query').textContent).toBe('?page=4'));
+    expect(screen.getAllByRole('article')).toHaveLength(4);
+    view.unmount();
+    renderStock('/estoque?search=nao-existe&page=3');
+    await screen.findByText(/Nenhum veículo encontrado/);
+    await waitFor(() => expect(screen.getByTestId('query').textContent).toBe('?search=nao-existe'));
+    expect(screen.queryByRole('navigation', { name: 'Paginação do estoque' })).not.toBeInTheDocument();
+  });
+
+  it('mantém o filtro de preço ao trocar de página e volta ao início ao mudar a ordem', async () => {
+    useCompleteInventory();
+    renderStock('/estoque?maxPrice=100000&sortBy=price_asc&page=1');
+    await screen.findByRole('navigation', { name: 'Paginação do estoque' });
+    expect(screen.getAllByRole('article')).toHaveLength(10);
+    fireEvent.click(screen.getByRole('button', { name: 'Próxima página' }));
+    expect(screen.getByTestId('query').textContent).toBe('?maxPrice=100000&sortBy=price_asc&page=2');
+    fireEvent.change(screen.getByLabelText('Ordenar por'), { target: { value: 'price_desc' } });
+    await screen.findByRole('navigation', { name: 'Paginação do estoque' });
+    expect(screen.getByTestId('query').textContent).toBe('?maxPrice=100000&sortBy=price_desc');
+    expect(screen.getByRole('button', { name: 'Ir para a página 1' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByLabelText('Faixa de preço')).toHaveValue(':100000');
+  });
+
+  it('mostra o estado de carregamento sem paginação e o substitui pelos resultados', async () => {
+    let resolveStock;
+    const pending = new Promise((resolve) => { resolveStock = resolve; });
+    api.get.mockImplementation((url, { params }) => url === '/vehicles' ? pending : Promise.resolve({ data: mockCatalogFilters(params) }));
+    renderStock();
+    expect(screen.getByRole('status', { name: 'Carregando veículos' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Resultados da busca' })).toHaveAttribute('aria-busy', 'true');
+    expect(screen.queryByRole('navigation', { name: 'Paginação do estoque' })).not.toBeInTheDocument();
+    await act(async () => resolveStock({ data: searchMockCatalog({}, testVehicles) }));
+    await screen.findByRole('heading', { name: 'Toyota Corolla' });
+    expect(screen.queryByRole('status', { name: 'Carregando veículos' })).not.toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Resultados da busca' })).toHaveAttribute('aria-busy', 'false');
+  });
 });

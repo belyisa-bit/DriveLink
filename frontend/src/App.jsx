@@ -1,5 +1,5 @@
 ﻿import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
@@ -26,9 +26,9 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/estoque" element={<StockPage />} />
+          <Route path="/destaques" element={<Navigate to="/#destaques" replace />} />
           {[
             ['/estoque/:slug', 'Detalhes do veículo'],
-            ['/destaques', 'Destaques'],
             ['/sobre', 'Sobre'],
             ['/contato', 'Contato'],
             ['/atendimento', 'Quero ser atendido'],

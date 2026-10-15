@@ -29,4 +29,13 @@ describe('Header', () => {
     expect(screen.getByRole('button', { name: 'Abrir menu' })).toHaveAttribute('aria-expanded', 'false');
     expect(screen.getByRole('link', { name: 'Estoque' })).toHaveAttribute('aria-current', 'page');
   });
+
+  it('não exibe Destaques no menu e mantém os links principais', () => {
+    render(<MemoryRouter><Header /></MemoryRouter>);
+    expect(screen.queryByRole('link', { name: 'Destaques' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Início' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: 'Estoque' })).toHaveAttribute('href', '/estoque');
+    expect(screen.getByRole('link', { name: 'Sobre' })).toHaveAttribute('href', '/sobre');
+    expect(screen.getByRole('link', { name: 'Contato' })).toHaveAttribute('href', '/contato');
+  });
 });

@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
 import { StockPage } from './pages/StockPage';
+import { VehicleDetailsPage } from './pages/VehicleDetailsPage';
 import { ToastProvider } from './components/Toast';
 
 const queryClient = new QueryClient({
@@ -26,9 +27,9 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/estoque" element={<StockPage />} />
+          <Route path="/estoque/:slug" element={<VehicleDetailsPage />} />
           <Route path="/destaques" element={<Navigate to="/#destaques" replace />} />
           {[
-            ['/estoque/:slug', 'Detalhes do veículo'],
             ['/sobre', 'Sobre'],
             ['/contato', 'Contato'],
             ['/atendimento', 'Quero ser atendido'],

@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { getCatalogFuel } from '../features/catalog/catalogFuels';
 import { mockCatalogVehicles } from '../features/catalog/mockCatalogVehicles';
 import { VehicleSummary } from '../features/vehicle-detail/VehicleSummary';
+import { VehicleSpecifications } from '../features/vehicle-detail/VehicleSpecifications';
 
 it('respeita a geração e deixa combustível indefinido quando depende da versão', () => {
   expect(getCatalogFuel('Jeep', 'Renegade', 2021)).toBeNull();
@@ -21,7 +22,7 @@ it('respeita a geração e deixa combustível indefinido quando depende da vers�
     expect(getCatalogFuel(...args)).toBeNull();
 });
 
-it('mostra o combustível cadastrado no resumo, ocultando o desconhecido', () => {
+it('mostra o combustível cadastrado no resumo e na ficha, ocultando o desconhecido', () => {
   const vehicle = mockCatalogVehicles.find(
     (item) =>
       item.brand === 'Toyota' && item.model === 'Corolla' && item.year === 2022,
@@ -30,13 +31,15 @@ it('mostra o combustível cadastrado no resumo, ocultando o desconhecido', () =>
   const view = render(
     <>
       <VehicleSummary vehicle={vehicle} />
+      <VehicleSpecifications vehicle={vehicle} />
     </>,
   );
-  expect(screen.getAllByText('Combustível')).toHaveLength(1);
-  expect(screen.getAllByText('Flex')).toHaveLength(1);
+  expect(screen.getAllByText('Combustível')).toHaveLength(2);
+  expect(screen.getAllByText('Flex')).toHaveLength(2);
   view.rerender(
     <>
       <VehicleSummary vehicle={{ ...vehicle, fuel: null }} />
+      <VehicleSpecifications vehicle={{ ...vehicle, fuel: null }} />
     </>,
   );
   expect(screen.queryByText('Combustível')).not.toBeInTheDocument();
@@ -48,9 +51,10 @@ it('não confunde motorização híbrida com combustível nas duas seções', ()
   render(
     <>
       <VehicleSummary vehicle={vehicle} />
+      <VehicleSpecifications vehicle={vehicle} />
     </>,
   );
-  expect(screen.getAllByText('Motorização')).toHaveLength(1);
-  expect(screen.getAllByText('Híbrida')).toHaveLength(1);
+  expect(screen.getAllByText('Motorização')).toHaveLength(2);
+  expect(screen.getAllByText('Híbrida')).toHaveLength(2);
   expect(screen.queryByText('Combustível')).not.toBeInTheDocument();
 });

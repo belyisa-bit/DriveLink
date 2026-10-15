@@ -7,6 +7,7 @@ import { Skeleton } from '../components/Skeleton';
 import { VehicleBreadcrumb } from '../features/vehicle-detail/VehicleBreadcrumb';
 import { VehicleGallery } from '../features/vehicle-detail/VehicleGallery';
 import { VehicleSummary } from '../features/vehicle-detail/VehicleSummary';
+import { VehicleSpecifications } from '../features/vehicle-detail/VehicleSpecifications';
 import { VehicleVariants } from '../features/vehicle-detail/VehicleVariants';
 import { getVehicleDetail } from '../features/vehicle-detail/vehicleDetailsApi';
 
@@ -87,6 +88,7 @@ export function VehicleDetailsPage() {
             <VehicleVariants vehicle={vehicle} />
           </Card>
         </aside>
+        <VehicleSpecifications vehicle={vehicle} />
       </div>
     </div>
   );

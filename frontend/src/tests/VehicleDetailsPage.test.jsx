@@ -142,7 +142,12 @@ it('mostra breadcrumb, resumo, selos, especificações e itens cadastrados', asy
   ).toHaveAttribute('href', '/estoque');
   expect(screen.getByText('Revisado')).toBeInTheDocument();
   expect(screen.queryByText('Com garantia')).not.toBeInTheDocument();
-
+  const specs = screen.getByRole('table', {
+    name: 'Especificações de Fiat Argo',
+  });
+  expect(within(specs).getByText('Flex')).toBeInTheDocument();
+  expect(within(specs).getByText('Manual')).toBeInTheDocument();
+  expect(screen.getByText('Ar-condicionado')).toBeInTheDocument();
 });
 
 it('troca ano, cor e quilometragem atualizando preço e URL, e restaura pelo histórico', async () => {

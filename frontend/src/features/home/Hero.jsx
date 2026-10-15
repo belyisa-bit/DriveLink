@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import { Button } from '../../components/Button';
-import jeepCompass from '../../assets/jeep-compass-hero.webp';
+import jeepCompass from '../../assets/vehicles/jeep-compass-hero.webp';
 
 export function Hero() {
   return (

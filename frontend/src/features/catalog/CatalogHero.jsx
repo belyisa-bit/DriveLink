@@ -1,4 +1,4 @@
-import jeepCompass from '../../assets/jeep-compass-hero.webp';
+import jeepCompass from '../../assets/vehicles/jeep-compass-hero.webp';
 
 export function CatalogHero() {
   return (

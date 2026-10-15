@@ -1,6 +1,6 @@
-import corolla from '../../assets/toyota-corolla-demo.webp';
-import compass from '../../assets/jeep-compass-hero.webp';
-import onix from '../../assets/chevrolet-onix-demo.webp';
+import corolla from '../../assets/vehicles/toyota-corolla-demo.webp';
+import compass from '../../assets/vehicles/jeep-compass-hero.webp';
+import onix from '../../assets/vehicles/chevrolet-onix-demo.webp';
 
 export const mockFeaturedVehicles = [
   { id: 1, brand: 'Toyota', model: 'Corolla', slug: 'toyota-corolla-2022', year: 2022, mileage: 38000, price: 142900, mainImageUrl: corolla, featured: true, status: 'DISPONIVEL' },

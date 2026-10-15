@@ -18,12 +18,12 @@ import {
   getVehicleDetail,
   getVehicleVariants,
   getSimilarVehicles,
-} from '../features/vehicle-detail/vehicleDetailsApi';
+} from '../features/vehicle/vehicleDetailsApi';
 import { mockCatalogVehicles } from '../features/catalog/mockCatalogVehicles';
 import { mockFeaturedVehicles } from '../features/home/mockFeaturedVehicles';
 import { formatBRL } from '../lib/formatters';
 
-vi.mock('../features/vehicle-detail/vehicleDetailsApi', () => ({
+vi.mock('../features/vehicle/vehicleDetailsApi', () => ({
   getVehicleDetail: vi.fn(),
   getVehicleVariants: vi.fn(),
   getSimilarVehicles: vi.fn(),
@@ -148,11 +148,18 @@ it('mostra breadcrumb, resumo, selos, especificações e itens cadastrados', asy
   expect(within(specs).getByText('Flex')).toBeInTheDocument();
   expect(within(specs).getByText('Manual')).toBeInTheDocument();
   expect(screen.getByText('Ar-condicionado')).toBeInTheDocument();
+  expect(
+    screen.queryByRole('region', { name: 'Convite para atendimento' }),
+  ).not.toBeInTheDocument();
 });
 
 it('troca ano, cor e quilometragem atualizando preço e URL, e restaura pelo histórico', async () => {
   renderPage(fixtures[0].slug);
   await screen.findByRole('option', { name: 'Preto' });
+  fireEvent.change(screen.getByRole('textbox', { name: 'Nome completo' }), {
+    target: { value: 'Maria Silva' },
+  });
+  fireEvent.click(screen.getByRole('checkbox'));
   expect(
     within(screen.getByLabelText('Ano disponível'))
       .getAllByRole('option')
@@ -166,6 +173,16 @@ it('troca ano, cor e quilometragem atualizando preço e URL, e restaura pelo his
       'argo-2024-preto',
     ),
   );
+  expect(screen.getByRole('textbox', { name: 'Nome completo' })).toHaveValue(
+    '',
+  );
+  expect(screen.getByRole('checkbox')).not.toBeChecked();
+  expect(
+    screen.getByRole('button', { name: 'Quero atendimento' }),
+  ).toBeDisabled();
+  expect(
+    screen.getByRole('link', { name: 'Fazer pré-cadastro' }),
+  ).toHaveAttribute('href', '/atendimento?vehicleSlug=argo-2024-preto');
   fireEvent.change(screen.getByLabelText('Quilometragem disponível'), {
     target: { value: 'argo-2024-preto-2' },
   });

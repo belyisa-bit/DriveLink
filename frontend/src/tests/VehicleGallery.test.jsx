@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { VehicleGallery } from '../features/vehicle-detail/VehicleGallery';
+import { VehicleGallery } from '../features/vehicle/VehicleGallery';
 
 const vehicle = {
   brand: 'Fiat',

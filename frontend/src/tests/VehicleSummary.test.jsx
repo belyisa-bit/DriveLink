@@ -1,5 +1,5 @@
 import { render, screen, within } from '@testing-library/react';
-import { VehicleSummary } from '../features/vehicle-detail/VehicleSummary';
+import { VehicleSummary } from '../features/vehicle/VehicleSummary';
 import { formatBRL } from '../lib/formatters';
 
 const vehicle = {

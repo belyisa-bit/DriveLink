@@ -1,17 +1,17 @@
-﻿import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Skeleton } from '../components/Skeleton';
-import { VehicleBreadcrumb } from '../features/vehicle-detail/VehicleBreadcrumb';
-import { VehicleGallery } from '../features/vehicle-detail/VehicleGallery';
-import { VehicleSummary } from '../features/vehicle-detail/VehicleSummary';
-import { VehicleSpecifications } from '../features/vehicle-detail/VehicleSpecifications';
-import { VehicleVariants } from '../features/vehicle-detail/VehicleVariants';
-import { VehicleInterestForm } from '../features/vehicle-detail/VehicleInterestForm';
-import { SimilarVehicles } from '../features/vehicle-detail/SimilarVehicles';
-import { getVehicleDetail } from '../features/vehicle-detail/vehicleDetailsApi';
+import { VehicleBreadcrumb } from '../features/vehicle/VehicleBreadcrumb';
+import { VehicleGallery } from '../features/vehicle/VehicleGallery';
+import { VehicleSummary } from '../features/vehicle/VehicleSummary';
+import { VehicleSpecifications } from '../features/vehicle/VehicleSpecifications';
+import { VehicleVariants } from '../features/vehicle/VehicleVariants';
+import { VehicleInterestForm } from '../features/vehicle/VehicleInterestForm';
+import { SimilarVehicles } from '../features/vehicle/SimilarVehicles';
+import { getVehicleDetail } from '../features/vehicle/vehicleDetailsApi';
 
 export function VehicleDetailsPage() {
   const { slug } = useParams();

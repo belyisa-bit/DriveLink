@@ -10,7 +10,7 @@ import { Button } from '../../components/Button';
 import { FormField } from '../../components/FormField';
 import { maskPhone } from '../../lib/masks';
 import { fieldClasses } from '../../lib/formField';
-import { interestSchema } from './interestSchema';
+import { interestSchema } from '../../lib/interestSchema';
 import { sendVehicleInterest } from './vehicleLeadApi';
 
 export function VehicleInterestForm({ vehicle }) {

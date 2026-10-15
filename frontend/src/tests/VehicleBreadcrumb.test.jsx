@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { VehicleBreadcrumb } from '../features/vehicle-detail/VehicleBreadcrumb';
+import { VehicleBreadcrumb } from '../features/vehicle/VehicleBreadcrumb';
 
 it('oferece links para início e estoque e identifica o veículo atual', () => {
   render(

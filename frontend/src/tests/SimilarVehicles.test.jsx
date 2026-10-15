@@ -1,10 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
-import { SimilarVehicles } from '../features/vehicle-detail/SimilarVehicles';
-import { getSimilarVehicles } from '../features/vehicle-detail/vehicleDetailsApi';
+import { SimilarVehicles } from '../features/vehicle/SimilarVehicles';
+import { getSimilarVehicles } from '../features/vehicle/vehicleDetailsApi';
 
-vi.mock('../features/vehicle-detail/vehicleDetailsApi', () => ({
+vi.mock('../features/vehicle/vehicleDetailsApi', () => ({
   getSimilarVehicles: vi.fn(),
 }));
 beforeEach(() => {

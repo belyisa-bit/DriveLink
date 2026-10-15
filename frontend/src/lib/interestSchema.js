@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { unmaskPhone } from '../../lib/masks';
+import { unmaskPhone } from './masks';
 
 export const interestSchema = z.object({
   name: z

@@ -3,8 +3,8 @@ import {
   getVehicleDetail,
   getVehicleVariants,
   getSimilarVehicles,
-} from '../features/vehicle-detail/vehicleDetailsApi';
-import { sendVehicleInterest } from '../features/vehicle-detail/vehicleLeadApi';
+} from '../features/vehicle/vehicleDetailsApi';
+import { sendVehicleInterest } from '../features/vehicle/vehicleLeadApi';
 
 vi.mock('../lib/axios', () => ({ api: { get: vi.fn(), post: vi.fn() } }));
 beforeEach(() => {

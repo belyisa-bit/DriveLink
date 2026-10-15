@@ -1,5 +1,5 @@
 import { render, screen, within } from '@testing-library/react';
-import { VehicleSpecifications } from '../features/vehicle-detail/VehicleSpecifications';
+import { VehicleSpecifications } from '../features/vehicle/VehicleSpecifications';
 
 const vehicle = {
   brand: 'Honda',

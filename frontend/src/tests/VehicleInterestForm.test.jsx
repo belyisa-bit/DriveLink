@@ -6,14 +6,16 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { VehicleInterestForm } from '../features/vehicle-detail/VehicleInterestForm';
-import { sendVehicleInterest } from '../features/vehicle-detail/vehicleLeadApi';
+import { VehicleInterestForm } from '../features/vehicle/VehicleInterestForm';
+import { sendVehicleInterest } from '../features/vehicle/vehicleLeadApi';
 
-vi.mock('../features/vehicle-detail/vehicleLeadApi', () => ({
+vi.mock('../features/vehicle/vehicleLeadApi', () => ({
   sendVehicleInterest: vi.fn(),
 }));
 const vehicle = { id: 12, slug: 'fiat-argo-2024', status: 'DISPONIVEL' };
-beforeEach(() => sendVehicleInterest.mockReset());
+beforeEach(() => {
+  sendVehicleInterest.mockReset();
+});
 function render(ui) {
   return renderComponent(ui, { wrapper: MemoryRouter });
 }

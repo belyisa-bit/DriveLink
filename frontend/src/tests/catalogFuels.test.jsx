@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { getCatalogFuel } from '../features/catalog/catalogFuels';
 import { mockCatalogVehicles } from '../features/catalog/mockCatalogVehicles';
-import { VehicleSummary } from '../features/vehicle-detail/VehicleSummary';
-import { VehicleSpecifications } from '../features/vehicle-detail/VehicleSpecifications';
+import { VehicleSummary } from '../features/vehicle/VehicleSummary';
+import { VehicleSpecifications } from '../features/vehicle/VehicleSpecifications';
 
 it('respeita a geração e deixa combustível indefinido quando depende da versão', () => {
   expect(getCatalogFuel('Jeep', 'Renegade', 2021)).toBeNull();

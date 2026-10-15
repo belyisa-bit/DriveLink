@@ -12,7 +12,7 @@ it('mantém o teste do formulário local sem enviar dados ou IDs fictícios ao b
   vi.stubEnv('VITE_USE_MOCK_CATALOG', 'true');
   vi.resetModules();
   const { sendVehicleInterest } =
-    await import('../features/vehicle-detail/vehicleLeadApi');
+    await import('../features/vehicle/vehicleLeadApi');
   expect(await sendVehicleInterest(mockCatalogVehicles[0], {})).toEqual({
     simulated: true,
   });
@@ -23,7 +23,7 @@ it('resolve os 362 veículos e as opções dos 44 modelos sem alterar o estoque 
   vi.stubEnv('VITE_USE_MOCK_CATALOG', 'true');
   vi.resetModules();
   const { getVehicleDetail, getVehicleVariants, getSimilarVehicles } =
-    await import('../features/vehicle-detail/vehicleDetailsApi');
+    await import('../features/vehicle/vehicleDetailsApi');
   for (const vehicle of mockCatalogVehicles) {
     const detail = await getVehicleDetail(vehicle.slug);
     expect(detail).toMatchObject({
@@ -42,7 +42,13 @@ it('resolve os 362 veículos e as opções dos 44 modelos sem alterar o estoque 
       expect(variants).toHaveLength(years.length);
     }
   }
-  const similar = await getSimilarVehicles(mockCatalogVehicles[0]);
+  const reference = mockCatalogVehicles.find(
+    (item) =>
+      item.brand === 'Fiat' && item.model === 'Argo' && item.year === 2024,
+  );
+  expect(reference).toBeDefined();
+  const similar = await getSimilarVehicles(reference);
+  expect(similar.length).toBeGreaterThan(0);
   expect(similar.length).toBeLessThanOrEqual(3);
   expect(
     new Set(similar.map((item) => `${item.brand}|${item.model}`)).size,
@@ -50,16 +56,14 @@ it('resolve os 362 veículos e as opções dos 44 modelos sem alterar o estoque 
   expect(
     similar.every(
       (item) =>
-        item.brand === mockCatalogVehicles[0].brand &&
-        Math.abs(item.price - mockCatalogVehicles[0].price) <=
-          mockCatalogVehicles[0].price * 0.25,
+        item.brand === reference.brand &&
+        Math.abs(item.price - reference.price) <= reference.price * 0.25,
     ),
   ).toBe(true);
   expect(
     similar.some(
       (item) =>
-        item.brand === mockCatalogVehicles[0].brand &&
-        item.model === mockCatalogVehicles[0].model,
+        item.brand === reference.brand && item.model === reference.model,
     ),
   ).toBe(false);
   await expect(getVehicleDetail('nao-existe')).rejects.toMatchObject({

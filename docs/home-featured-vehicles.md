@@ -10,7 +10,9 @@ A integração real continua pendente da disponibilização da API e do alinhame
 
 ## Imagens ilustrativas
 
-As imagens de Corolla e Onix foram criadas com a ferramenta integrada ImageGen e salvas em `frontend/src/assets/toyota-corolla-demo.png` e `frontend/src/assets/chevrolet-onix-demo.png`. O Compass reutiliza o recorte da imagem fornecida pelo autor.
+As imagens de Corolla e Onix foram criadas com a ferramenta integrada ImageGen e otimizadas para `frontend/src/assets/toyota-corolla-demo.webp` e `frontend/src/assets/chevrolet-onix-demo.webp`. O Compass reutiliza o recorte da imagem fornecida pelo autor em `frontend/src/assets/jeep-compass-hero.webp`.
+
+Os cards usam imagens de 900 × 600 pixels e o Hero usa 1400 × 788 pixels. A conversão com Sharp usa qualidade 85 e preserva o canal de transparência do Compass. As três imagens somam aproximadamente 207 KB, contra 5,5 MB dos PNGs originais.
 
 Prompt do Corolla:
 

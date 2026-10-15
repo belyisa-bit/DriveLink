@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import { Button } from '../../components/Button';
-import jeepCompass from '../../assets/jeep-compass-hero.png';
+import jeepCompass from '../../assets/jeep-compass-hero.webp';
 
 export function Hero() {
   return (
@@ -28,7 +28,7 @@ export function Hero() {
             <span className="absolute -right-[8%] -top-[5%] aspect-square w-[65%] rounded-full bg-gradient-to-br from-brand to-orange-500" />
             <span className="absolute -right-[22%] -top-[30%] aspect-square w-[85%] rounded-full border border-orange-400" />
           </div>
-          <img src={jeepCompass} alt="Jeep Compass cinza visto de frente e de lado" width="1672" height="944" fetchPriority="high" decoding="async" className="relative z-10 block h-auto w-full drop-shadow-xl" />
+          <img src={jeepCompass} alt="Jeep Compass cinza visto de frente e de lado" width="1400" height="788" fetchPriority="high" decoding="async" className="relative z-10 block h-auto w-full drop-shadow-xl" />
         </div>
       </div>
     </section>

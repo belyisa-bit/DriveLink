@@ -4,10 +4,13 @@ import { StockPage } from '../pages/StockPage';
 import { VehicleDetailsPage } from '../pages/VehicleDetailsPage';
 import { AboutPage } from '../pages/AboutPage';
 import { ContactPage } from '../pages/ContactPage';
+import { LeadFormPage } from '../pages/LeadFormPage';
+
 
 export function AppRoutes() {
   return (
     <Routes>
+      <Route path="/atendimento" element={<LeadFormPage />} />
       <Route path="/" element={<HomePage />} />
       <Route path="/estoque" element={<StockPage />} />
       <Route path="/estoque/:slug" element={<VehicleDetailsPage />} />
@@ -19,6 +22,8 @@ export function AppRoutes() {
 <Route path="/contato" element={<ContactPage />} />
       {[
         ['/atendimento', 'Quero ser atendido'],
+        ['/sobre', 'Sobre'],
+        ['/contato', 'Contato'],
       ].map(([path, title]) => (
         <Route
           key={path}

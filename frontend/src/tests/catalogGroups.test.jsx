@@ -32,3 +32,15 @@ it('Ver detalhes navega para a URL da unidade com o preço anunciado no card', a
   expect(await screen.findByRole('heading', { name: 'Detalhes de argo-c' })).toBeInTheDocument();
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 });
+
+it('prioriza a foto da unidade anunciada e recupera a imagem ao mudar os resultados do modelo', () => {
+  const initial = groupCatalogVehicles(vehicles.slice(0, 2).map((vehicle) => ({ ...vehicle, mainImageUrl: `${vehicle.slug}.webp` })))[0];
+  const view = render(<MemoryRouter><CatalogModelCard group={initial} /></MemoryRouter>);
+  expect(screen.getByRole('img', { name: 'Fiat Argo' })).toHaveAttribute('src', 'argo-b.webp');
+  fireEvent.error(screen.getByRole('img', { name: 'Fiat Argo' }));
+  expect(screen.queryByRole('img', { name: 'Fiat Argo' })).not.toBeInTheDocument();
+  const next = groupCatalogVehicles([{ ...vehicles[2], mainImageUrl: 'argo-c.webp' }])[0];
+  view.rerender(<MemoryRouter><CatalogModelCard group={next} /></MemoryRouter>);
+  expect(screen.getByRole('img', { name: 'Fiat Argo' })).toHaveAttribute('src', 'argo-c.webp');
+  expect(screen.getByRole('link', { name: 'Ver detalhes de Fiat Argo' })).toHaveAttribute('href', '/estoque/argo-c');
+});

@@ -5,14 +5,14 @@ import { Button } from '../../components/Button';
 import { formatBRL } from '../../lib/formatters';
 
 export function CatalogModelCard({ group }) {
-  const [failed, setFailed] = useState(false);
+  const [failedImage, setFailedImage] = useState(null);
   const name = `${group.brand} ${group.model}`;
-  const image = group.vehicles.find((vehicle) => vehicle.mainImageUrl)?.mainImageUrl;
   const vehicle = group.vehicles.reduce((lowest, current) => current.price < lowest.price ? current : lowest);
+  const image = vehicle.mainImageUrl || group.vehicles.find((item) => item.mainImageUrl)?.mainImageUrl;
   return (
     <Card as="article" className="flex h-full flex-col p-3 transition-shadow duration-200 hover:shadow-lg focus-within:shadow-lg motion-safe:transition-[transform,box-shadow] motion-safe:hover:-translate-y-1 motion-safe:focus-within:-translate-y-1">
       <div className="flex aspect-[3/2] items-center justify-center overflow-hidden rounded-xl bg-stone-100">
-        {image && !failed ? <img src={image} alt={name} width="900" height="600" loading="lazy" decoding="async" onError={() => setFailed(true)} className="h-full w-full object-contain" /> : <Car size={36} aria-label="Imagem indisponível" className="text-slate-400" />}
+        {image && failedImage !== image ? <img src={image} alt={name} width="900" height="600" loading="lazy" decoding="async" onError={() => setFailedImage(image)} className="h-full w-full object-contain" /> : <Car size={36} aria-label="Imagem indisponível" className="text-slate-400" />}
       </div>
       <div className="flex flex-1 flex-col px-1 pb-1 pt-4">
         <h3 className="text-lg font-bold tracking-tight text-slate-950">{name}</h3>

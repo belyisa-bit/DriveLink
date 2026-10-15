@@ -1,7 +1,7 @@
 import {
   act,
   fireEvent,
-  render,
+  render as renderComponent,
   screen,
   waitFor,
 } from '@testing-library/react';
@@ -14,6 +14,9 @@ vi.mock('../features/vehicle-detail/vehicleLeadApi', () => ({
 }));
 const vehicle = { id: 12, slug: 'fiat-argo-2024', status: 'DISPONIVEL' };
 beforeEach(() => sendVehicleInterest.mockReset());
+function render(ui) {
+  return renderComponent(ui, { wrapper: MemoryRouter });
+}
 function fill() {
   fireEvent.change(screen.getByRole('textbox', { name: 'Nome completo' }), {
     target: { value: '  Maria Silva  ' },
@@ -31,17 +34,23 @@ it('valida dados e consentimento antes de enviar nome e telefone normalizados', 
   sendVehicleInterest.mockResolvedValue({ simulated: false, id: 91 });
   render(<VehicleInterestForm vehicle={vehicle} />);
   expect(
-    screen.getByRole('button', { name: 'Enviar interesse' }),
+    screen.getByRole('link', { name: 'Fazer pré-cadastro' }),
+  ).toHaveAttribute('href', '/atendimento?vehicleSlug=fiat-argo-2024');
+  expect(
+    screen.getByText('Seus dados estão seguros com a Drivelink.'),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('button', { name: 'Quero atendimento' }),
   ).toBeDisabled();
-  fireEvent.click(screen.getByRole('button', { name: 'Enviar interesse' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Quero atendimento' }));
   fireEvent.submit(screen.getByRole('form', { name: 'Interesse no veículo' }));
   expect(await screen.findByText('Informe seu nome.')).toBeInTheDocument();
   expect(sendVehicleInterest).not.toHaveBeenCalled();
   fill();
   expect(
-    screen.getByRole('button', { name: 'Enviar interesse' }),
+    screen.getByRole('button', { name: 'Quero atendimento' }),
   ).toBeDisabled();
-  fireEvent.click(screen.getByRole('button', { name: 'Enviar interesse' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Quero atendimento' }));
   expect(
     await screen.findByText(
       'Autorize o uso dos seus dados para receber o contato.',
@@ -50,9 +59,9 @@ it('valida dados e consentimento antes de enviar nome e telefone normalizados', 
   expect(sendVehicleInterest).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole('checkbox'));
   expect(
-    screen.getByRole('button', { name: 'Enviar interesse' }),
+    screen.getByRole('button', { name: 'Quero atendimento' }),
   ).toBeEnabled();
-  fireEvent.click(screen.getByRole('button', { name: 'Enviar interesse' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Quero atendimento' }));
   expect(
     await screen.findByText('Recebemos seu interesse!'),
   ).toBeInTheDocument();
@@ -70,7 +79,7 @@ it('bloqueia novamente ao apagar dados, informar e-mail inválido ou retirar o c
   render(<VehicleInterestForm vehicle={vehicle} />);
   fill();
   fireEvent.click(screen.getByRole('checkbox'));
-  const button = screen.getByRole('button', { name: 'Enviar interesse' });
+  const button = screen.getByRole('button', { name: 'Quero atendimento' });
   expect(button).toBeEnabled();
   for (const [name, invalid, valid] of [
     ['Nome completo', '   ', 'Maria Silva'],
@@ -105,14 +114,14 @@ it('preserva os dados após erro e permite nova tentativa', async () => {
   render(<VehicleInterestForm vehicle={vehicle} />);
   fill();
   fireEvent.click(screen.getByRole('checkbox'));
-  fireEvent.click(screen.getByRole('button', { name: 'Enviar interesse' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Quero atendimento' }));
   expect(await screen.findByRole('alert')).toHaveTextContent(
     'Muitas solicitações',
   );
   expect(screen.getByRole('textbox', { name: 'E-mail' })).toHaveValue(
     'maria@example.com',
   );
-  fireEvent.click(screen.getByRole('button', { name: 'Enviar interesse' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Quero atendimento' }));
   expect(
     await screen.findByText('Recebemos seu interesse!'),
   ).toBeInTheDocument();
@@ -128,7 +137,7 @@ it('impede envio duplicado enquanto a solicitação está em andamento', async (
   render(<VehicleInterestForm vehicle={vehicle} />);
   fill();
   fireEvent.click(screen.getByRole('checkbox'));
-  fireEvent.click(screen.getByRole('button', { name: 'Enviar interesse' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Quero atendimento' }));
   expect(
     await screen.findByRole('button', { name: 'Enviando…' }),
   ).toBeDisabled();
@@ -142,14 +151,10 @@ it('impede envio duplicado enquanto a solicitação está em andamento', async (
 
 it('identifica testes locais e não oferece formulário para unidades indisponíveis', async () => {
   sendVehicleInterest.mockResolvedValue({ simulated: true });
-  const view = render(
-    <MemoryRouter>
-      <VehicleInterestForm vehicle={vehicle} />
-    </MemoryRouter>,
-  );
+  const view = render(<VehicleInterestForm vehicle={vehicle} />);
   fill();
   fireEvent.click(screen.getByRole('checkbox'));
-  fireEvent.click(screen.getByRole('button', { name: 'Enviar interesse' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Quero atendimento' }));
   expect(
     await screen.findByText('Formulário de teste validado.'),
   ).toBeInTheDocument();
@@ -157,15 +162,13 @@ it('identifica testes locais e não oferece formulário para unidades indisponí
     screen.queryByText('Recebemos seu interesse!'),
   ).not.toBeInTheDocument();
   view.rerender(
-    <MemoryRouter>
-      <VehicleInterestForm
-        key="vendido"
-        vehicle={{ ...vehicle, status: 'VENDIDO' }}
-      />
-    </MemoryRouter>,
+    <VehicleInterestForm
+      key="vendido"
+      vehicle={{ ...vehicle, status: 'VENDIDO' }}
+    />,
   );
   expect(
-    screen.queryByRole('button', { name: 'Enviar interesse' }),
+    screen.queryByRole('button', { name: 'Quero atendimento' }),
   ).not.toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Ver estoque' })).toHaveAttribute(
     'href',

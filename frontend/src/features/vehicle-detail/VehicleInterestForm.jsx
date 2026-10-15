@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Link } from 'react-router-dom';
 import { CheckCircle2, Send } from 'lucide-react';
 import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
@@ -222,8 +223,17 @@ export function VehicleInterestForm({ vehicle }) {
                 className="w-full"
               >
                 <Send size={17} aria-hidden="true" />
-                {isSubmitting ? 'Enviando…' : 'Enviar interesse'}
+                {isSubmitting ? 'Enviando…' : 'Quero atendimento'}
               </Button>
+              <Link
+                to={`/atendimento?${new URLSearchParams({ vehicleSlug: vehicle.slug })}`}
+                className="block text-center text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-hover"
+              >
+                Fazer pré-cadastro
+              </Link>
+              <p className="text-center text-xs leading-relaxed text-slate-500">
+                Seus dados estão seguros com a Drivelink.
+              </p>
             </fieldset>
           </form>
         </>

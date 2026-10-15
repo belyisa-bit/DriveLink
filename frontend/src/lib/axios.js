@@ -6,3 +6,15 @@ export const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+api.interceptors.request.use((config) => {
+  const token = sessionStorage.getItem('drivelink_admin_token');
+  const tokenType =
+    sessionStorage.getItem('drivelink_admin_token_type') || 'Bearer';
+
+  if (token) {
+    config.headers.Authorization = `${tokenType} ${token}`;
+  }
+
+  return config;
+});

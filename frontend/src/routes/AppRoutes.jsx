@@ -2,6 +2,9 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { HomePage } from '../pages/HomePage';
 import { StockPage } from '../pages/StockPage';
 import { VehicleDetailsPage } from '../pages/VehicleDetailsPage';
+import { AdminLoginPage } from '../pages/AdminLoginPage';
+import { AdminDashboardPage } from '../pages/AdminDashboardPage';
+import { AdminRoute } from '../features/admin/AdminRoute';
 
 export function AppRoutes() {
   return (
@@ -29,6 +32,11 @@ export function AppRoutes() {
           }
         />
       ))}
+      <Route path="/admin/login" element={<AdminLoginPage />} />
+
+<Route element={<AdminRoute />}>
+  <Route path="/admin" element={<AdminDashboardPage />} />
+</Route>
       <Route
         path="*"
         element={<p className="p-10 text-center">Página não encontrada.</p>}

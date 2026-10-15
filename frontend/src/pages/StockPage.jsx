@@ -6,6 +6,8 @@ import { catalogParams, getCatalogVehicles } from '../features/catalog/catalogAp
 import { VehicleCard } from '../components/VehicleCard';
 import { Button } from '../components/Button';
 import { CtaBanner } from '../components/CtaBanner';
+import { CatalogFilters } from '../features/catalog/CatalogFilters';
+import { filterKeys } from '../features/catalog/filterOptions';
 
 export function StockPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,12 +22,24 @@ export function StockPage() {
     setSearchParams(next);
   }
 
+  function applyFilters(filters) {
+    const next = new URLSearchParams(searchParams);
+    for (const key of filterKeys) {
+      if (filters[key]) next.set(key, filters[key]);
+      else next.delete(key);
+    }
+    next.delete('page');
+    setSearchParams(next);
+  }
+
   return (
     <>
       <CatalogHero />
       <div className="mx-auto max-w-7xl px-5 pb-8 sm:px-8 lg:px-10">
         <CatalogSearch search={params.search || ''} onSearch={handleSearch} />
-        <section aria-label="Resultados da busca" className="py-8">
+        <div className="grid items-start gap-6 py-8 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)]">
+        <CatalogFilters key={searchParams.toString()} applied={params} onApply={applyFilters} onClear={() => applyFilters({})} />
+        <section aria-label="Resultados da busca" className="min-w-0">
           {query.isPending ? <p role="status" className="py-8 text-slate-600">Carregando veículos…</p> : query.isError ? (
             <div role="status" className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
               <p className="text-slate-600">Não foi possível carregar o estoque. Tente novamente.</p>
@@ -35,6 +49,7 @@ export function StockPage() {
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{query.data.content.map((vehicle) => <VehicleCard key={vehicle.id} vehicle={vehicle} layout="catalog" />)}</div>
           ) : <p role="status" className="rounded-2xl border border-slate-200 bg-white p-6 text-slate-600">Nenhum veículo encontrado. Tente outra busca ou ajuste os filtros.</p>}
         </section>
+        </div>
         <CtaBanner title="Seu próximo carro está" highlight="mais perto." />
       </div>
     </>

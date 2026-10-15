@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { StockPage } from '../pages/StockPage';
 import { api } from '../lib/axios';
-import { searchMockCatalog } from '../features/catalog/mockCatalog';
+import { searchMockCatalog, mockCatalogFilters } from '../features/catalog/mockCatalog';
 
 vi.mock('../lib/axios', () => ({ api: { get: vi.fn() } }));
 
@@ -19,7 +19,7 @@ function renderStock(url = '/estoque') {
 describe('Busca no estoque', () => {
   beforeEach(() => {
     api.get.mockReset();
-    api.get.mockImplementation((_url, { params }) => Promise.resolve({ data: searchMockCatalog(params) }));
+    api.get.mockImplementation((url, { params }) => Promise.resolve({ data: url === '/vehicles/filters' ? mockCatalogFilters() : searchMockCatalog(params) }));
   });
 
   it('busca somente ao enviar e remove espaços nas extremidades', async () => {
@@ -59,4 +59,33 @@ describe('Busca no estoque', () => {
     expect(await screen.findByRole('heading', { name: 'Jeep Compass' })).toBeInTheDocument();
   });
 
+  it('aplica os filtros somente ao confirmar e atualiza os modelos pela marca', async () => {
+    renderStock();
+    await screen.findByRole('option', { name: 'Toyota' });
+    fireEvent.change(screen.getByLabelText('Marca'), { target: { value: 'Toyota' } });
+    await screen.findByRole('option', { name: 'Corolla' });
+    fireEvent.change(screen.getByLabelText('Modelo'), { target: { value: 'Corolla' } });
+    await screen.findByRole('option', { name: '2022' });
+    fireEvent.change(screen.getByLabelText('Ano'), { target: { value: '2022' } });
+    expect(screen.getByTestId('query').textContent).toBe('');
+    fireEvent.click(screen.getByRole('button', { name: 'Aplicar filtros' }));
+    expect(screen.getByTestId('query').textContent).toBe('?brand=Toyota&model=Corolla&minYear=2022&maxYear=2022');
+    await screen.findByRole('heading', { name: 'Toyota Corolla' });
+    expect(screen.queryByRole('heading', { name: 'Jeep Compass' })).not.toBeInTheDocument();
+  });
+
+  it('limpa os filtros sem apagar o termo de busca', async () => {
+    renderStock('/estoque?search=Corolla&brand=Toyota&minPrice=100000&page=2');
+    await screen.findByRole('heading', { name: 'Toyota Corolla' });
+    fireEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }));
+    expect(screen.getByTestId('query').textContent).toBe('?search=Corolla');
+    expect(screen.getByLabelText('Marca')).toHaveValue('');
+  });
+
+  it('mantém o preço recebido da URL e não aplica ano sem modelo selecionado', async () => {
+    renderStock('/estoque?minYear=2021&maxYear=2024&minPrice=150000.01');
+    await screen.findByRole('option', { name: 'Toyota' });
+    fireEvent.click(screen.getByRole('button', { name: 'Aplicar filtros' }));
+    expect(screen.getByTestId('query').textContent).toBe('?minPrice=150000.01');
+  });
 });

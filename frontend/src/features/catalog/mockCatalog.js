@@ -1,4 +1,5 @@
 import { mockFeaturedVehicles } from '../home/mockFeaturedVehicles';
+import { suggestedBrands, suggestedModels } from './catalogSuggestions';
 
 const normalize = (value) => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
@@ -17,3 +18,16 @@ export function searchMockCatalog(params) {
   return { content, totalElements: content.length, totalPages: content.length ? 1 : 0, number: 0 };
 }
 
+export function mockCatalogFilters() {
+  const vehicles = mockFeaturedVehicles.filter((vehicle) => vehicle.status === 'DISPONIVEL');
+  return {
+    brands: suggestedBrands(),
+    years: [...new Set(vehicles.map((vehicle) => vehicle.year))],
+    minPrice: vehicles.length ? Math.min(...vehicles.map((vehicle) => vehicle.price)) : null,
+    maxPrice: vehicles.length ? Math.max(...vehicles.map((vehicle) => vehicle.price)) : null,
+  };
+}
+
+export function mockCatalogModels(brand) {
+  return suggestedModels(brand);
+}

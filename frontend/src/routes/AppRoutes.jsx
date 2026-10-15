@@ -2,10 +2,13 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { HomePage } from '../pages/HomePage';
 import { StockPage } from '../pages/StockPage';
 import { VehicleDetailsPage } from '../pages/VehicleDetailsPage';
+import { LeadFormPage } from '../pages/LeadFormPage';
+
 
 export function AppRoutes() {
   return (
     <Routes>
+      <Route path="/atendimento" element={<LeadFormPage />} />
       <Route path="/" element={<HomePage />} />
       <Route path="/estoque" element={<StockPage />} />
       <Route path="/estoque/:slug" element={<VehicleDetailsPage />} />
@@ -16,7 +19,6 @@ export function AppRoutes() {
       {[
         ['/sobre', 'Sobre'],
         ['/contato', 'Contato'],
-        ['/atendimento', 'Quero ser atendido'],
       ].map(([path, title]) => (
         <Route
           key={path}

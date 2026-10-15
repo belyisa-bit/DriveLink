@@ -2,7 +2,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { CtaBanner } from './components/CtaBanner';
+import { HomePage } from './pages/HomePage';
 import { ToastProvider } from './components/Toast';
 
 const queryClient = new QueryClient({
@@ -23,21 +23,10 @@ export function App() {
         <Header />
         <main id="main-content" className="flex-1">
         <Routes>
-          <Route path="/" element={
-            <>
-            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-4">
-              <h1 className="text-4xl font-bold text-slate-900">
-                Drive<span className="text-brand">link</span>
-              </h1>
-              <p className="text-lg text-slate-600 mt-2">Mais que carros, novos caminhos.</p>
-            </div>
-            <div className="mx-auto max-w-7xl px-5 pb-8 sm:px-8 lg:px-10">
-              <CtaBanner />
-            </div>
-            </>
-          } />
+          <Route path="/" element={<HomePage />} />
           {[
             ['/estoque', 'Estoque'],
+            ['/estoque/:slug', 'Detalhes do veículo'],
             ['/destaques', 'Destaques'],
             ['/sobre', 'Sobre'],
             ['/contato', 'Contato'],

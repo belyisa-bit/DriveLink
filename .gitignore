@@ -27,3 +27,15 @@ target/
 
 # Logs
 *.log
+
+# Arquivos temporários locais do Codex
+.codex-tmp/
+
+# Anotações locais de desenvolvimento (não publicar)
+docs/catalog-images.md
+docs/catalog.md
+docs/frontend-components.md
+docs/frontend-utils.md
+docs/home-featured-vehicles.md
+docs/home-quick-search.md
+docs/driv-74-planejamento.md

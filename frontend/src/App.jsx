@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
+import { StockPage } from './pages/StockPage';
 import { ToastProvider } from './components/Toast';
 
 const queryClient = new QueryClient({
@@ -24,8 +25,8 @@ export function App() {
         <main id="main-content" className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/estoque" element={<StockPage />} />
           {[
-            ['/estoque', 'Estoque'],
             ['/estoque/:slug', 'Detalhes do veículo'],
             ['/destaques', 'Destaques'],
             ['/sobre', 'Sobre'],

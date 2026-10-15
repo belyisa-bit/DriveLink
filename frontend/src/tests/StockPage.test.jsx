@@ -59,6 +59,27 @@ describe('Busca no estoque', () => {
     expect(screen.getByTestId('query').textContent).toBe('');
   });
 
+  it('restaura os resultados ao apagar o texto sem precisar enviar novamente', async () => {
+    renderStock('/estoque?search=Onix');
+    await screen.findByRole('heading', { name: 'Chevrolet Onix' });
+    expect(screen.queryByRole('heading', { name: 'Toyota Corolla' })).not.toBeInTheDocument();
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: '' } });
+    expect(await screen.findByRole('heading', { name: 'Toyota Corolla' })).toBeInTheDocument();
+    expect(screen.getByTestId('query').textContent).toBe('');
+    expect(screen.getByRole('searchbox')).toHaveValue('');
+  });
+
+  it('ao apagar a busca, mantém filtros e ordem e retorna à primeira página', async () => {
+    useCompleteInventory();
+    renderStock('/estoque?search=a&maxPrice=100000&sortBy=price_asc&page=1');
+    await screen.findByRole('navigation', { name: 'Paginação do estoque' });
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: '' } });
+    await waitFor(() => expect(screen.getByTestId('query').textContent).toBe('?maxPrice=100000&sortBy=price_asc'));
+    expect(screen.getByLabelText('Ordenar por')).toHaveValue('price_asc');
+    await waitFor(() => expect(screen.getByLabelText('Faixa de preço')).toHaveValue(':100000'));
+    expect(await screen.findByRole('button', { name: 'Ir para a página 1' })).toHaveAttribute('aria-current', 'page');
+  });
+
   it('oferece nova tentativa quando a consulta falha', async () => {
     api.get.mockRejectedValueOnce(new Error('offline'));
     renderStock();

@@ -2,6 +2,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { HomePage } from '../pages/HomePage';
 import { StockPage } from '../pages/StockPage';
 import { VehicleDetailsPage } from '../pages/VehicleDetailsPage';
+import { AboutPage } from '../pages/AboutPage';
+import { ContactPage } from '../pages/ContactPage';
 
 export function AppRoutes() {
   return (
@@ -13,9 +15,9 @@ export function AppRoutes() {
         path="/destaques"
         element={<Navigate to="/#destaques" replace />}
       />
+      <Route path="/sobre" element={<AboutPage />} />
+<Route path="/contato" element={<ContactPage />} />
       {[
-        ['/sobre', 'Sobre'],
-        ['/contato', 'Contato'],
         ['/atendimento', 'Quero ser atendido'],
       ].map(([path, title]) => (
         <Route

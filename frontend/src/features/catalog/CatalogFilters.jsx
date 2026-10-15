@@ -53,7 +53,7 @@ export function CatalogFilters({ applied, onApply, onClear }) {
         {brand && models.isError && <p role="status" className="text-sm text-red-700">Não foi possível carregar os modelos. <button type="button" onClick={() => models.refetch()} className="rounded underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand">Tentar novamente</button></p>}
         {selectedModel && yearOptions.isError && <p role="status" className="text-sm text-red-700">Não foi possível carregar os anos. <button type="button" onClick={() => yearOptions.refetch()} className="rounded underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand">Tentar novamente</button></p>}
         <Button type="submit" disabled={options.isPending || options.isError || Boolean(selectedBrand && (models.isPending || models.isError)) || Boolean(selectedModel && (yearOptions.isPending || yearOptions.isError))} className="w-full">Aplicar filtros</Button>
-        <button type="button" onClick={onClear} className="block w-full rounded py-2 text-sm font-semibold text-brand-hover underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand">Limpar filtros</button>
+        <button type="button" onClick={() => { setBrand(''); setModel(''); setYear(''); setPrice(''); onClear(); }} className="block w-full rounded py-2 text-sm font-semibold text-brand-hover underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand">Limpar filtros</button>
       </form>
     </Card>
   );

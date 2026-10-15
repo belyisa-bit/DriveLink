@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, useLocation } from 'react-router-dom';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import { StockPage } from '../pages/StockPage';
 import { api } from '../lib/axios';
 import { searchMockCatalog, mockCatalogFilters } from '../features/catalog/mockCatalog';
@@ -12,7 +12,8 @@ const testVehicles = mockFeaturedVehicles.map((vehicle, index) => ({ ...vehicle,
 vi.mock('../lib/axios', () => ({ api: { get: vi.fn() } }));
 
 function Location() {
-  return <p data-testid="query">{useLocation().search}</p>;
+  const navigate = useNavigate();
+  return <><p data-testid="query">{useLocation().search}</p><button onClick={() => navigate(-1)}>Voltar no histórico</button><button onClick={() => navigate(1)}>Avançar no histórico</button></>;
 }
 
 function renderStock(url = '/estoque') {
@@ -123,4 +124,43 @@ describe('Busca no estoque', () => {
     expect(await screen.findByRole('heading', { name: '0 veículos encontrados' })).toBeInTheDocument();
     expect(screen.getByLabelText('Ordenar por')).toHaveValue('recent');
   });
+
+  it('restaura campos, ordem e resultados ao recarregar um link e navegar no histórico', async () => {
+    const url = '/estoque?search=Corolla&brand=Toyota&model=Corolla&minYear=2022&maxYear=2022&maxPrice=150000&sortBy=price_desc';
+    const first = renderStock(url);
+    await waitFor(() => expect(screen.getByLabelText('Ano')).toHaveValue('2022'));
+    first.unmount();
+    renderStock(url);
+    await waitFor(() => expect(screen.getByLabelText('Ano')).toHaveValue('2022'));
+    expect(screen.getByRole('searchbox')).toHaveValue('Corolla');
+    expect(screen.getByLabelText('Marca')).toHaveValue('Toyota');
+    expect(screen.getByLabelText('Modelo')).toHaveValue('Corolla');
+    expect(screen.getByLabelText('Faixa de preço')).toHaveValue(':150000');
+    expect(screen.getByLabelText('Ordenar por')).toHaveValue('price_desc');
+    fireEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }));
+    expect(screen.getByTestId('query').textContent).toBe('?search=Corolla&sortBy=price_desc');
+    fireEvent.click(screen.getByRole('button', { name: 'Voltar no histórico' }));
+    await waitFor(() => expect(screen.getByLabelText('Ano')).toHaveValue('2022'));
+    expect(screen.getByLabelText('Marca')).toHaveValue('Toyota');
+    expect(await screen.findByRole('heading', { name: '1 veículo encontrado' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Avançar no histórico' }));
+    expect(screen.getByLabelText('Marca')).toHaveValue('');
+    expect(screen.getByLabelText('Modelo')).toHaveValue('');
+    expect(screen.getByLabelText('Ano')).toHaveValue('');
+    expect(screen.getByLabelText('Ordenar por')).toHaveValue('price_desc');
+  });
+
+  it('preserva um filtro ainda não aplicado ao ordenar e limpa esse rascunho sem mudar a URL', async () => {
+    renderStock();
+    await screen.findByRole('option', { name: 'Toyota' });
+    fireEvent.change(screen.getByLabelText('Marca'), { target: { value: 'Toyota' } });
+    await screen.findByRole('option', { name: 'Corolla' });
+    fireEvent.change(screen.getByLabelText('Ordenar por'), { target: { value: 'price_asc' } });
+    expect(screen.getByLabelText('Marca')).toHaveValue('Toyota');
+    expect(screen.getByTestId('query').textContent).toBe('?sortBy=price_asc');
+    fireEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }));
+    expect(screen.getByLabelText('Marca')).toHaveValue('');
+    expect(screen.getByTestId('query').textContent).toBe('?sortBy=price_asc');
+  });
+
 });

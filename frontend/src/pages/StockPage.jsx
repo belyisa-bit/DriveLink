@@ -1,59 +1,29 @@
 import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
 import { CatalogHero } from '../features/catalog/CatalogHero';
 import { CatalogSearch } from '../features/catalog/CatalogSearch';
-import { catalogParams, getCatalogVehicles } from '../features/catalog/catalogApi';
+import { getCatalogVehicles } from '../features/catalog/catalogApi';
 import { CatalogModelCard } from '../features/catalog/CatalogModelCard';
 import { groupCatalogVehicles } from '../features/catalog/catalogGroups';
 import { Button } from '../components/Button';
 import { CtaBanner } from '../components/CtaBanner';
 import { CatalogFilters } from '../features/catalog/CatalogFilters';
-import { filterKeys } from '../features/catalog/filterOptions';
 import { CatalogToolbar } from '../features/catalog/CatalogToolbar';
-import { validCatalogSort } from '../features/catalog/catalogSort';
+import { useCatalogLocation } from '../features/catalog/useCatalogLocation';
 
 export function StockPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const params = catalogParams(searchParams);
+  const { params, filtersKey, search, applyFilters, sort } = useCatalogLocation();
   const query = useQuery({ queryKey: ['vehicles', 'catalog', params], queryFn: (context) => getCatalogVehicles(params, context) });
   const groups = groupCatalogVehicles(query.data?.content || [], params.sortBy);
-
-  function handleSearch(search) {
-    const next = new URLSearchParams(searchParams);
-    if (search) next.set('search', search);
-    else next.delete('search');
-    next.delete('page');
-    setSearchParams(next);
-  }
-
-  function applyFilters(filters) {
-    const next = new URLSearchParams(searchParams);
-    for (const key of filterKeys) {
-      if (filters[key]) next.set(key, filters[key]);
-      else next.delete(key);
-    }
-    next.delete('page');
-    setSearchParams(next);
-  }
-
-  function handleSort(value) {
-    const next = new URLSearchParams(searchParams);
-    const sort = validCatalogSort(value);
-    if (sort === 'recent') next.delete('sortBy');
-    else next.set('sortBy', sort);
-    next.delete('page');
-    setSearchParams(next);
-  }
 
   return (
     <>
       <CatalogHero />
       <div className="mx-auto max-w-7xl px-5 pb-8 sm:px-8 lg:px-10">
-        <CatalogSearch search={params.search || ''} onSearch={handleSearch} />
+        <CatalogSearch search={params.search || ''} onSearch={search} />
         <div className="grid items-start gap-6 py-8 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)]">
-        <CatalogFilters key={searchParams.toString()} applied={params} onApply={applyFilters} onClear={() => applyFilters({})} />
+        <CatalogFilters key={filtersKey} applied={params} onApply={applyFilters} onClear={() => applyFilters({})} />
         <section aria-label="Resultados da busca" className="min-w-0">
-          <CatalogToolbar models={groups.length} total={query.data?.totalElements ?? query.data?.content.length ?? 0} loading={query.isPending} error={query.isError} sort={params.sortBy || 'recent'} onSort={handleSort} />
+          <CatalogToolbar models={groups.length} total={query.data?.totalElements ?? query.data?.content.length ?? 0} loading={query.isPending} error={query.isError} sort={params.sortBy || 'recent'} onSort={sort} />
           {query.isPending ? <p role="status" className="py-8 text-slate-600">Carregando veículos…</p> : query.isError ? (
             <div role="status" className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
               <p className="text-slate-600">Não foi possível carregar o estoque. Tente novamente.</p>

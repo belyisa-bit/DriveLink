@@ -24,4 +24,12 @@ Em produção sempre é usada a API. A integração real permanece pendente do a
 
 O contador usa `totalElements` retornado pela consulta e reflete os filtros aplicados, com singular e plural. A ordenação usa o parâmetro `sortBy` do controller: `recent`, `price_asc`, `price_desc` e `mileage_asc`. Mudar a ordem preserva a busca e os filtros e remove a página da URL. A lista local também respeita essas ordens, usando datas de cadastro fictícias apenas no catálogo. O grid apresenta uma coluna no celular, duas em telas intermediárias e três no desktop.
 
-Próximas etapas: sincronização completa com a URL (DRIV-72), paginação e refinamento dos estados de carregamento e vazio (DRIV-73).
+## Sincronização com a URL (DRIV-72)
+
+`catalogLocation.js` centraliza a leitura e a atualização da query string, e `useCatalogLocation.js` conecta esse estado ao React Router. Busca, marca, modelo, anos, preço e ordenação são restaurados ao abrir um link diretamente ou navegar com Voltar/Avançar. Os campos permanecem editáveis antes de aplicar os filtros. Alterar somente a ordem não descarta filtros ainda não aplicados; “Limpar filtros” também apaga esse rascunho.
+
+Preços aceitam valores não negativos com até duas casas decimais; anos aceitam inteiros de quatro dígitos. Valores inválidos e intervalos invertidos são ignorados na consulta. Ordenação desconhecida usa “Mais recentes”. Atualizações preservam parâmetros externos, como `utm_source`, e não criam uma nova entrada de histórico quando a URL já representa o mesmo estado.
+
+O hook também lê e atualiza `page` como índice iniciado em zero, preservando filtros e ordem. A página inicial é representada pela ausência do parâmetro; páginas inválidas voltam ao índice zero. Busca, aplicação/limpeza de filtros e ordenação reiniciam a página. O parâmetro de página da interface não é enviado à consulta que agrega todas as unidades por modelo.
+
+Próxima etapa: paginação e refinamento dos estados de carregamento e vazio (DRIV-73).

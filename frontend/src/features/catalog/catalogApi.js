@@ -1,18 +1,6 @@
 import { api } from '../../lib/axios';
-import { validCatalogSort } from './catalogSort';
 
 export const usingMockCatalog = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_CATALOG === 'true';
-
-export function catalogParams(searchParams) {
-  const params = {};
-  for (const key of ['search', 'brand', 'model', 'minPrice', 'maxPrice', 'minYear', 'maxYear']) {
-    const value = searchParams.get(key)?.trim();
-    if (value) params[key] = value;
-  }
-  const sort = validCatalogSort(searchParams.get('sortBy'));
-  if (sort !== 'recent') params.sortBy = sort;
-  return params;
-}
 
 export async function getCatalogFilters({ signal }) {
   if (usingMockCatalog) {

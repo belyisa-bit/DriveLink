@@ -1,10 +1,10 @@
-import { mockFeaturedVehicles } from '../home/mockFeaturedVehicles';
+import { mockCatalogVehicles } from './mockCatalogVehicles';
 import { suggestedBrands, suggestedModels } from './catalogSuggestions';
 
 const normalize = (value) => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
-export function searchMockCatalog(params) {
-  const content = mockFeaturedVehicles.filter((vehicle) => {
+export function searchMockCatalog(params, vehicles = mockCatalogVehicles) {
+  const content = vehicles.filter((vehicle) => {
     const text = normalize(`${vehicle.brand} ${vehicle.model} ${vehicle.version || ''}`);
     return vehicle.status === 'DISPONIVEL'
       && (!params.search || text.includes(normalize(params.search)))
@@ -15,11 +15,18 @@ export function searchMockCatalog(params) {
       && (!params.minYear || vehicle.year >= Number(params.minYear))
       && (!params.maxYear || vehicle.year <= Number(params.maxYear));
   });
+  const compare = {
+    price_asc: (a, b) => a.price - b.price,
+    price_desc: (a, b) => b.price - a.price,
+    mileage_asc: (a, b) => a.mileage - b.mileage,
+    recent: (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+  };
+  content.sort(compare[params.sortBy] || compare.recent);
   return { content, totalElements: content.length, totalPages: content.length ? 1 : 0, number: 0 };
 }
 
 export function mockCatalogFilters() {
-  const vehicles = mockFeaturedVehicles.filter((vehicle) => vehicle.status === 'DISPONIVEL');
+  const vehicles = mockCatalogVehicles.filter((vehicle) => vehicle.status === 'DISPONIVEL');
   return {
     brands: suggestedBrands(),
     years: [...new Set(vehicles.map((vehicle) => vehicle.year))],

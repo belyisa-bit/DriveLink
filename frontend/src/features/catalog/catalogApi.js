@@ -1,4 +1,5 @@
 import { api } from '../../lib/axios';
+import { validCatalogSort } from './catalogSort';
 
 export const usingMockCatalog = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_CATALOG === 'true';
 
@@ -8,6 +9,8 @@ export function catalogParams(searchParams) {
     const value = searchParams.get(key)?.trim();
     if (value) params[key] = value;
   }
+  const sort = validCatalogSort(searchParams.get('sortBy'));
+  if (sort !== 'recent') params.sortBy = sort;
   return params;
 }
 
@@ -66,5 +69,12 @@ export async function getCatalogVehicles(params, { signal }) {
   }
   const { data } = await api.get('/vehicles', { params, signal });
   if (!Array.isArray(data?.content)) throw new Error('Resposta inválida ao consultar o estoque.');
-  return data;
+  // Todas as unidades são necessárias para não separar um modelo entre páginas.
+  const content = [...data.content];
+  for (let page = 1; page < data.totalPages; page += 1) {
+    const response = await api.get('/vehicles', { params: { ...params, page }, signal });
+    if (!Array.isArray(response.data?.content)) throw new Error('Resposta inválida ao consultar o estoque.');
+    content.push(...response.data.content);
+  }
+  return { ...data, content };
 }

@@ -27,3 +27,6 @@ target/
 
 # Logs
 *.log
+
+# Arquivos temporários locais do Codex
+.codex-tmp/

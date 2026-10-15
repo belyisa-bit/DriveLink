@@ -4,7 +4,7 @@ import { Card } from './Card';
 import { Button } from './Button';
 import { formatBRL, formatKm } from '../lib/formatters';
 
-export function VehicleCard({ vehicle }) {
+export function VehicleCard({ vehicle, layout = 'compact' }) {
   const [failedImage, setFailedImage] = useState(null);
   const name = `${vehicle.brand} ${vehicle.model}`;
   const hasImage = vehicle.mainImageUrl && failedImage !== vehicle.mainImageUrl;
@@ -21,7 +21,7 @@ export function VehicleCard({ vehicle }) {
       <div className="flex flex-1 flex-col px-1 pb-1 pt-4">
         <h3 className="text-lg font-bold tracking-tight text-slate-950">{name}</h3>
         <p className="mt-1 text-sm text-slate-600">{vehicle.year ?? '—'}<span aria-hidden="true" className="mx-3 text-slate-300">|</span><span className="sr-only">, </span>{formatKm(vehicle.mileage)}</p>
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-4">
+        <div className={`mt-auto flex gap-3 pt-4 ${layout === 'catalog' ? 'flex-col items-stretch' : 'flex-wrap items-center justify-between'}`}>
           <p className="text-xl font-extrabold text-brand">{formatBRL(vehicle.price)}</p>
           <Button to={`/estoque/${encodeURIComponent(vehicle.slug)}`} variant="outline" aria-label={`Ver detalhes de ${name}`} className="px-4 text-xs">Ver detalhes <ArrowRight size={16} aria-hidden="true" /></Button>
         </div>

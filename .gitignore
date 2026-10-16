@@ -1,0 +1,41 @@
+﻿# IDEs e Editores
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Ambiente (.env)
+.env
+.env*.local
+!.env.example
+
+# Node / Frontend
+node_modules/
+dist/
+coverage/
+.vite/
+
+# Java / Maven / Backend
+target/
+*.class
+*.jar
+*.war
+
+# Logs
+*.log
+
+# Arquivos temporários locais do Codex
+.codex-tmp/
+
+# Anotações locais de desenvolvimento (não publicar)
+docs/catalog-images.md
+docs/catalog.md
+docs/frontend-components.md
+docs/frontend-utils.md
+docs/home-featured-vehicles.md
+docs/home-quick-search.md
+docs/driv-74-planejamento.md

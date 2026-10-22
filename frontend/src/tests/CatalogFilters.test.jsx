@@ -1,12 +1,25 @@
+
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CatalogFilters } from '../features/catalog/CatalogFilters';
-import { suggestedBrands, suggestedModels, suggestedYears } from '../features/catalog/catalogSuggestions';
+import {
+  suggestedBrands,
+  suggestedModels,
+  suggestedYears,
+} from '../features/catalog/catalogSuggestions';
 
 vi.mock('../features/catalog/catalogApi', () => ({
-  getCatalogFilters: vi.fn(), getCatalogModels: vi.fn(), getCatalogYears: vi.fn(),
+  getCatalogFilters: vi.fn(),
+  getCatalogModels: vi.fn(),
+  getCatalogYears: vi.fn(),
 }));
-import { getCatalogFilters, getCatalogModels, getCatalogYears } from '../features/catalog/catalogApi';
+
+import {
+  getCatalogFilters,
+  getCatalogModels,
+  getCatalogYears,
+} from '../features/catalog/catalogApi';
+
 
 describe('Dependência dos filtros do catálogo', () => {
   beforeEach(() => {
@@ -24,7 +37,7 @@ describe('Dependência dos filtros do catálogo', () => {
     const year = screen.getByLabelText('Ano');
     expect(model).toBeDisabled();
     expect(year).toBeDisabled();
-    await screen.findByRole('option', { name: 'Citroën' });
+    await screen.findByRole('option', { name: 'Citroën' }); //linha de espera para o carregamento das marcas
     fireEvent.change(brand, { target: { value: 'Citroën' } });
     await screen.findByRole('option', { name: 'C3' });
     expect(within(model).queryByRole('option', { name: 'Onix' })).not.toBeInTheDocument();

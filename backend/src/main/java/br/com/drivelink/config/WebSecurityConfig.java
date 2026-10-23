@@ -14,12 +14,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
+
+    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000}")
+    private String allowedOrigins;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -39,6 +45,8 @@ public class WebSecurityConfig {
                 .requestMatchers(
                     "/auth/login",
                     "/api/v1/**",
+                    "/vehicles",
+                    "/vehicles/**",
                     "/leads",
                     "/leads/**",
                     "/swagger-ui/**",
@@ -60,9 +68,12 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-            List.of("http://localhost:5173", "http://localhost:3000")
-        );
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+            .map(String::trim)
+            .map(origin -> origin.replaceAll("/+$", ""))
+            .filter(origin -> !origin.isEmpty())
+            .collect(Collectors.toList());
+        configuration.setAllowedOrigins(origins);
 
         configuration.setAllowedMethods(
             List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")

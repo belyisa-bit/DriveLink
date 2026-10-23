@@ -12,6 +12,7 @@ import { CatalogToolbar } from '../features/catalog/CatalogToolbar';
 import { useCatalogLocation } from '../features/catalog/useCatalogLocation';
 import { CatalogPagination, catalogPageSize } from '../features/catalog/CatalogPagination';
 import { CatalogSkeleton } from '../features/catalog/CatalogSkeleton';
+import { DemoDataNotice } from '../components/DemoDataNotice';
 
 export function StockPage() {
   const { params, page, setPage, filtersKey, search, applyFilters, sort } = useCatalogLocation();
@@ -34,6 +35,7 @@ export function StockPage() {
   return (
     <>
       <CatalogHero />
+      <DemoDataNotice />
       <div className="mx-auto max-w-7xl px-5 pb-8 sm:px-8 lg:px-10">
         <CatalogSearch search={params.search || ''} onSearch={search} />
         <div className="grid items-start gap-6 py-8 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)]">

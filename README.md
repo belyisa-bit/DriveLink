@@ -357,7 +357,7 @@ Content-Type: application/json
 
 - Autenticação **stateless** com JWT (HS256), expiração padrão de 60 minutos.
 - Rotas `/admin/**` restritas ao perfil `ADMIN`; senhas armazenadas com hash.
-- **CORS** liberado apenas para `http://localhost:5173` e `http://localhost:3000`.
+- **CORS** configurado pela variável `CORS_ALLOWED_ORIGINS`; em produção, informe os domínios publicados da Vercel.
 - **Rate limit** em `POST /leads`: 5 requisições por minuto por IP (resposta `429`).
 - O formulário só é enviado com o **consentimento LGPD** marcado; o backend também valida e registra a data e hora do consentimento (`lgpd_consent_at`).
 - A notificação por e-mail escapa o conteúdo recebido (proteção contra HTML injection) e não registra dados pessoais nos logs em caso de falha.
@@ -437,10 +437,20 @@ O frontend fica disponível em `http://localhost:5173`.
 | `APP_ADMIN_EMAIL` / `APP_ADMIN_PASSWORD` | Backend | Cria o administrador inicial |
 | `MAIL_HOST` / `MAIL_PORT` / `MAIL_USERNAME` / `MAIL_PASSWORD` | Backend | Servidor SMTP |
 | `MAIL_FROM` / `MAIL_TO` | Backend | Remetente e destinatário das notificações de lead |
-| `VITE_API_URL` | Frontend | URL base da API |
+| `VITE_API_URL` | Frontend | URL base pública da API, sem `/api/v1` (ex.: `https://drivelink-api.onrender.com`) |
+| `CORS_ALLOWED_ORIGINS` | Backend | Origens do frontend separadas por vírgula, incluindo `https://` |
 | `VITE_USE_MOCK_FILTERS` / `_FEATURED` / `_CATALOG` | Frontend | Ativam dados locais em desenvolvimento |
 
-> **Atenção:** o frontend usa por padrão `http://localhost:8080/api/v1` como URL base, mas os controllers do backend respondem na raiz (`/vehicles`, `/leads`, `/auth`, `/admin`). Veja [Limitações e próximos passos](#limitações-e-próximos-passos) antes de integrar as duas pontas.
+> Em produção, configure `VITE_API_URL` na Vercel com o endereço público do serviço Render (sem `/api/v1`). O backend responde na raiz (`/vehicles`, `/leads`, `/auth`, `/admin`).
+
+### Deploy na Vercel e no Render
+
+1. Na Vercel, defina `VITE_API_URL` como a URL pública do backend Render, por exemplo `https://drivelink-api.onrender.com` (sem caminho adicional), e faça um novo deploy.
+2. No Render, defina `CORS_ALLOWED_ORIGINS` com a URL da Vercel, por exemplo `https://drivelink.vercel.app`. Se usar domínio próprio, inclua-o separado por vírgula.
+3. No Render, configure `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD` e `JWT_SECRET` para o banco e a autenticação.
+4. No Render, configure o diretório raiz do serviço como `backend` e selecione `Dockerfile`. A aplicação escuta em `PORT` (padrão Render: `10000`) e mantém `8080` como padrão local.
+
+As variáveis da Vercel são incorporadas durante o build; após alterá-las, faça um novo deploy. O arquivo `frontend/vercel.json` mantém as rotas internas do React Router funcionando ao abrir ou atualizar uma página diretamente.
 
 ### Comandos úteis
 
@@ -538,11 +548,11 @@ Os commits seguem a convenção **Conventional Commits** (`feat`, `fix`, `refact
 ## Limitações e próximos passos
 
 - A **área administrativa do frontend** tem apenas login e painel com atalhos; as telas de gestão de veículos e de leads (`/admin/veiculos` e `/admin/leads`) ainda não foram construídas, embora a API correspondente já esteja pronta.
-- O **prefixo da API** precisa ser alinhado: o frontend chama `/api/v1/...` por padrão, enquanto os controllers do backend respondem sem esse prefixo. É necessário padronizar um dos lados (por exemplo, `server.servlet.context-path` ou `@RequestMapping("/api/v1")`) ou ajustar `VITE_API_URL`.
+- O frontend chama os endpoints na raiz do serviço configurado em `VITE_API_URL`; os controllers respondem em `/vehicles`, `/leads`, `/auth` e `/admin`.
 - O **administrador inicial** é lido de `app.admin.*`, mas o `application.yml` declara as chaves como `admin.*`; por isso a configuração recomendada usa `APP_ADMIN_EMAIL` e `APP_ADMIN_PASSWORD`.
 - O `JWT_SECRET` precisa estar em **Base64**; o valor de exemplo do `.env.example` não está nesse formato e deve ser substituído.
 - As **credenciais do banco** não devem ficar fixas nos arquivos `application*.yml`; migrar para variáveis de ambiente e trocar as senhas já expostas no histórico.
-- A lista de origens do **CORS** está fixa em `localhost`; será preciso configurá-la para o domínio publicado.
+- A lista de origens permitidas pelo **CORS** é definida em `CORS_ALLOWED_ORIGINS` no ambiente do backend.
 - As imagens do seed (`V4`) apontam para URLs externas e só 2 dos 6 veículos têm fotos; o frontend usa as imagens locais de `assets/vehicles/`. O ideal é unificar essa origem (por exemplo, armazenamento de imagens).
 - O **rate limit** é em memória e por IP, então não é compartilhado entre instâncias.
 - Falta configurar **CI/CD** (o diretório `.github/workflows` está vazio) e o **deploy**.

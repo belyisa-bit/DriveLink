@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Expõe a porta do Spring Boot
-EXPOSE 8080
+EXPOSE 10000
 
 # Executa a aplicação
 CMD ["java", "-jar", "app.jar"]

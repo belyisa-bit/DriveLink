@@ -1,7 +1,19 @@
 ﻿import axios from 'axios';
 
+const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
+
+if (!import.meta.env.DEV && !configuredApiUrl) {
+  throw new Error(
+    'VITE_API_URL não configurada. Defina a URL pública do backend Render nas variáveis de ambiente da Vercel.',
+  );
+}
+
+const apiBaseUrl = (configuredApiUrl || 'http://localhost:8080')
+  .replace(/\/+$/, '')
+  .replace(/\/api\/v1$/, '');
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1',
+  baseURL: apiBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },

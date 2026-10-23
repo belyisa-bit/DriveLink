@@ -7,30 +7,44 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Date;
 
 @Service
 public class JwtService {
 
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
+
     private final SecretKey secretKey;
     private final long expirationMinutes;
 
     public JwtService(
-            @Value("${app.security.jwt.secret}") String secret,
-            @Value("${app.security.jwt.expiration-minutes:60}") long expirationMinutes,
-            @Value("${JWT_SECRET:}") String configuredSecret,
-            @Value("${RENDER:false}") boolean renderEnvironment) {
+            @Value("${app.security.jwt.secret:}") String secret,
+            @Value("${app.security.jwt.expiration-minutes:60}") long expirationMinutes) {
 
-        if (renderEnvironment && configuredSecret.isBlank()) {
-            throw new IllegalStateException("JWT_SECRET deve ser configurado no ambiente do Render.");
+        this.secretKey = loadSecretKey(secret);
+        this.expirationMinutes = expirationMinutes;
+    }
+
+    private SecretKey loadSecretKey(String secret) {
+        if (secret != null && !secret.isBlank()) {
+            try {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+            } catch (RuntimeException exception) {
+                log.warn("JWT_SECRET ausente ou inválido; usando chave temporária. Configure um JWT_SECRET Base64 estável para preservar sessões após reinícios.");
+            }
+        } else {
+            log.warn("JWT_SECRET não configurado; usando chave temporária. Configure um JWT_SECRET Base64 estável para preservar sessões após reinícios.");
         }
 
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
-        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
-        this.expirationMinutes = expirationMinutes;
+        byte[] randomKey = new byte[32];
+        new SecureRandom().nextBytes(randomKey);
+        return Keys.hmacShaKeyFor(randomKey);
     }
 
     public String gerarToken(UserDetails userDetails) {

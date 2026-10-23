@@ -416,7 +416,7 @@ export MAIL_TO=destinatario@email.com
 ./mvnw spring-boot:run
 ```
 
-O perfil `dev` também oferece um segredo JWT fictício para execução local quando `JWT_SECRET` não estiver definido. Em produção, configure sempre um `JWT_SECRET` próprio no Render; o fallback local não deve ser usado no deploy.
+Se `JWT_SECRET` estiver ausente ou inválido, a API inicia com uma chave aleatória temporária. Os tokens deixam de valer após reiniciar o serviço. Configure um `JWT_SECRET` Base64 estável no Render para manter as sessões administrativas entre reinícios.
 
 As migrations são aplicadas automaticamente na primeira execução. O backend sobe em `http://localhost:8080`.
 
@@ -436,7 +436,7 @@ O frontend fica disponível em `http://localhost:5173`.
 | Variável | Onde | Descrição |
 | --- | --- | --- |
 | `SPRING_DATASOURCE_URL` / `_USERNAME` / `_PASSWORD` | Backend | Conexão com o PostgreSQL |
-| `JWT_SECRET` | Backend | Segredo de assinatura JWT em Base64 (obrigatório no Render; opcional no perfil `dev`) |
+| `JWT_SECRET` | Backend | Segredo de assinatura JWT em Base64 (recomendado no Render e localmente; sem ele, a API usa uma chave temporária) |
 | `APP_ADMIN_EMAIL` / `APP_ADMIN_PASSWORD` | Backend | Cria o administrador inicial |
 | `MAIL_HOST` / `MAIL_PORT` / `MAIL_USERNAME` / `MAIL_PASSWORD` | Backend | Servidor SMTP |
 | `MAIL_FROM` / `MAIL_TO` | Backend | Remetente e destinatário das notificações de lead |

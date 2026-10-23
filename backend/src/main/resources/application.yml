@@ -16,3 +16,11 @@
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: ${PORT:8080}
+
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:}

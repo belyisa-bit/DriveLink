@@ -4,6 +4,7 @@ import br.com.drivelink.lead.domain.Lead;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -27,8 +28,8 @@ public class LeadNotificationService {
     @Value("${app.mail.to:}")
     private String to;
 
-    public LeadNotificationService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    public LeadNotificationService(ObjectProvider<JavaMailSender> mailSenderProvider) {
+        this.mailSender = mailSenderProvider.getIfAvailable();
     }
 
     @Async
@@ -36,6 +37,13 @@ public class LeadNotificationService {
         if (to == null || to.isBlank()) {
             System.err.println(
                 "Notificação de lead não enviada: destinatário não configurado."
+            );
+            return;
+        }
+
+        if (mailSender == null) {
+            System.err.println(
+                "NotificaÃ§Ã£o de lead nÃ£o enviada: SMTP nÃ£o configurado."
             );
             return;
         }

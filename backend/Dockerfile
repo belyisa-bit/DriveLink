@@ -1,18 +1,24 @@
-# Usa uma imagem oficial do Java 21 para compilar e rodar
-FROM eclipse-temurin:21-jdk-alpine
+# Usa uma imagem oficial do Java 21 com Maven já instalado
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 
-# Define a pasta de trabalho dentro do container
+# Define a pasta de trabalho
 WORKDIR /app
 
-# Copia o código do backend para o container
+# Copia todo o conteúdo da pasta backend
 COPY . .
 
-# Dá permissão de execução ao Maven Wrapper e faz o build do projeto
-RUN chmod +x mvnw
-RUN ./mvnw clean package -DskipTests
+# Compila o projeto e gera o arquivo .jar
+RUN mvn clean package -DskipTests
 
-# Expõe a porta padrão do Spring Boot
+# Estágio de execução (manted o container leve)
+FROM eclipse-temurin:21-jdk-alpine
+WORKDIR /app
+
+# Copia apenas o .jar gerado no estágio anterior
+COPY --from=build /app/target/*.jar app.jar
+
+# Expõe a porta do Spring Boot
 EXPOSE 8080
 
-# Executa a aplicação Java
-CMD ["java", "-jar", "target/drivelink-backend-0.0.1-SNAPSHOT.jar"]
+# Executa a aplicação
+CMD ["java", "-jar", "app.jar"]

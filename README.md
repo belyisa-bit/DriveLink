@@ -450,7 +450,7 @@ O frontend fica disponível em `http://localhost:5173`.
 
 1. Na Vercel, defina `VITE_API_URL` como a URL pública do backend Render, por exemplo `https://drivelink-api.onrender.com` (sem caminho adicional), e faça um novo deploy.
 2. No Render, defina `CORS_ALLOWED_ORIGINS` com a URL da Vercel, por exemplo `https://drivelink.vercel.app`. Se usar domínio próprio, inclua-o separado por vírgula.
-3. No Render, configure `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD` e `JWT_SECRET` para o banco e a autenticação.
+3. No Render, vincule o PostgreSQL ao serviço para disponibilizar `DATABASE_URL` (o backend converte automaticamente o formato do Render para JDBC), ou configure `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME` e `SPRING_DATASOURCE_PASSWORD`. Configure também `JWT_SECRET`.
 4. No Render, configure o diretório raiz do serviço como `backend` e selecione `Dockerfile`. A aplicação escuta em `PORT` (padrão Render: `10000`) e mantém `8080` como padrão local.
 
 As variáveis da Vercel são incorporadas durante o build; após alterá-las, faça um novo deploy. O arquivo `frontend/vercel.json` mantém as rotas internas do React Router funcionando ao abrir ou atualizar uma página diretamente.

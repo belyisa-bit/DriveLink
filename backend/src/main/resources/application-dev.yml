@@ -23,3 +23,9 @@ management:
     web:
       exposure:
         include: health, info, metrics
+
+# Fallback exclusivo de desenvolvimento. Em produção, defina JWT_SECRET no Render.
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:ZHJpdmVsaW5rLWxvY2FsLWRldi1vbmx5LXNlY3JldC0yMDI2}

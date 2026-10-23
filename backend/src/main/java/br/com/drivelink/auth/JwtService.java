@@ -20,7 +20,13 @@ public class JwtService {
 
     public JwtService(
             @Value("${app.security.jwt.secret}") String secret,
-            @Value("${app.security.jwt.expiration-minutes:60}") long expirationMinutes) {
+            @Value("${app.security.jwt.expiration-minutes:60}") long expirationMinutes,
+            @Value("${JWT_SECRET:}") String configuredSecret,
+            @Value("${RENDER:false}") boolean renderEnvironment) {
+
+        if (renderEnvironment && configuredSecret.isBlank()) {
+            throw new IllegalStateException("JWT_SECRET deve ser configurado no ambiente do Render.");
+        }
 
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);

@@ -398,8 +398,9 @@ export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/drivelink
 export SPRING_DATASOURCE_USERNAME=postgres
 export SPRING_DATASOURCE_PASSWORD=sua_senha
 
-# O segredo JWT deve estar em Base64 (mínimo de 256 bits)
-export JWT_SECRET=$(openssl rand -base64 32)
+# Opcional localmente; gere um segredo próprio para produção:
+# export JWT_SECRET=$(openssl rand -base64 32)
+export SPRING_PROFILES_ACTIVE=dev
 
 # Administrador inicial (senha com no mínimo 12 caracteres)
 export APP_ADMIN_EMAIL=admin@drivelink.com
@@ -414,6 +415,8 @@ export MAIL_TO=destinatario@email.com
 
 ./mvnw spring-boot:run
 ```
+
+O perfil `dev` também oferece um segredo JWT fictício para execução local quando `JWT_SECRET` não estiver definido. Em produção, configure sempre um `JWT_SECRET` próprio no Render; o fallback local não deve ser usado no deploy.
 
 As migrations são aplicadas automaticamente na primeira execução. O backend sobe em `http://localhost:8080`.
 
@@ -433,7 +436,7 @@ O frontend fica disponível em `http://localhost:5173`.
 | Variável | Onde | Descrição |
 | --- | --- | --- |
 | `SPRING_DATASOURCE_URL` / `_USERNAME` / `_PASSWORD` | Backend | Conexão com o PostgreSQL |
-| `JWT_SECRET` | Backend | Segredo de assinatura do JWT, em Base64 (obrigatório) |
+| `JWT_SECRET` | Backend | Segredo de assinatura JWT em Base64 (obrigatório no Render; opcional no perfil `dev`) |
 | `APP_ADMIN_EMAIL` / `APP_ADMIN_PASSWORD` | Backend | Cria o administrador inicial |
 | `MAIL_HOST` / `MAIL_PORT` / `MAIL_USERNAME` / `MAIL_PASSWORD` | Backend | Servidor SMTP |
 | `MAIL_FROM` / `MAIL_TO` | Backend | Remetente e destinatário das notificações de lead |

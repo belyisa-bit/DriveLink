@@ -49,6 +49,7 @@ public class WebSecurityConfig {
                     "/vehicles/**",
                     "/leads",
                     "/leads/**",
+                    "/vehicle-images/**",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
                     "/actuator/**"

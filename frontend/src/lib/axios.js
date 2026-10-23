@@ -1,14 +1,11 @@
 ﻿import axios from 'axios';
 
 const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
+const defaultApiUrl = import.meta.env.DEV
+  ? 'http://localhost:8080'
+  : 'https://drivelink.onrender.com';
 
-if (!import.meta.env.DEV && !configuredApiUrl) {
-  throw new Error(
-    'VITE_API_URL não configurada. Defina a URL pública do backend Render nas variáveis de ambiente da Vercel.',
-  );
-}
-
-const apiBaseUrl = (configuredApiUrl || 'http://localhost:8080')
+const apiBaseUrl = (configuredApiUrl || defaultApiUrl)
   .replace(/\/+$/, '')
   .replace(/\/api\/v1$/, '');
 

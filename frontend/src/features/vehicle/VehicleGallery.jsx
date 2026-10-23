@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Camera, Car, ChevronLeft, ChevronRight } from 'lucide-react';
 import { VehiclePhotoCredit } from '../../components/VehiclePhotoCredit';
+import { resolveVehicleImageUrl } from '../../lib/axios';
 
 export function VehicleGallery({ vehicle }) {
   const [activeUrl, setActiveUrl] = useState(null);
@@ -46,7 +47,7 @@ export function VehicleGallery({ vehicle }) {
       <div className="relative flex aspect-[3/2] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-stone-100">
         {selected ? (
           <img
-            src={selected}
+            src={resolveVehicleImageUrl(selected)}
             alt={`${name} — foto ${urls.indexOf(selected) + 1}`}
             width="900"
             height="600"
@@ -107,7 +108,7 @@ export function VehicleGallery({ vehicle }) {
               className={`w-24 shrink-0 overflow-hidden rounded-xl border-2 bg-stone-100 p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${url === selected ? 'border-brand' : 'border-slate-200'}`}
             >
               <img
-                src={url}
+                src={resolveVehicleImageUrl(url)}
                 alt=""
                 width="150"
                 height="100"

@@ -4,6 +4,7 @@ import { Card } from './Card';
 import { Button } from './Button';
 import { formatBRL, formatKm } from '../lib/formatters';
 import { VehiclePhotoCredit } from './VehiclePhotoCredit';
+import { resolveVehicleImageUrl } from '../lib/axios';
 
 export function VehicleCard({ vehicle, layout = 'compact' }) {
   const [failedImage, setFailedImage] = useState(null);
@@ -18,7 +19,7 @@ export function VehicleCard({ vehicle, layout = 'compact' }) {
       <div className="flex aspect-[3/2] items-center justify-center overflow-hidden rounded-xl bg-stone-100">
         {hasImage ? (
           <img
-            src={vehicle.mainImageUrl}
+            src={resolveVehicleImageUrl(vehicle.mainImageUrl)}
             alt={name}
             width="600"
             height="400"

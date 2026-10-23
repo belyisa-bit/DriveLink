@@ -4,6 +4,7 @@ import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { formatBRL } from '../../lib/formatters';
 import { VehiclePhotoCredit } from '../../components/VehiclePhotoCredit';
+import { resolveVehicleImageUrl } from '../../lib/axios';
 
 export function CatalogModelCard({ group }) {
   const [failedImage, setFailedImage] = useState(null);
@@ -20,7 +21,7 @@ export function CatalogModelCard({ group }) {
       <div className="flex aspect-[3/2] items-center justify-center overflow-hidden rounded-xl bg-stone-100">
         {image && failedImage !== image ? (
           <img
-            src={image}
+            src={resolveVehicleImageUrl(image)}
             alt={name}
             width="900"
             height="600"

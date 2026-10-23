@@ -16,6 +16,16 @@ export const api = axios.create({
   },
 });
 
+export function resolveVehicleImageUrl(imageUrl) {
+  if (!imageUrl) return imageUrl;
+
+  try {
+    return new URL(imageUrl).toString();
+  } catch {
+    return new URL(imageUrl, `${api.defaults.baseURL}/`).toString();
+  }
+}
+
 api.interceptors.request.use((config) => {
   const token = sessionStorage.getItem('drivelink_admin_token');
   const tokenType =

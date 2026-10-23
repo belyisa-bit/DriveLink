@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /** Maps Render's DATABASE_URL (postgres://...) to Spring's JDBC properties. */
@@ -20,7 +21,7 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
         String jdbcUrl = environment.getProperty("SPRING_DATASOURCE_URL");
         String databaseUrl = environment.getProperty("DATABASE_URL");
 
-        if (jdbcUrl != null && !jdbcUrl.isBlank()) {
+        if (jdbcUrl != null && !jdbcUrl.isBlank() && !isLocalhostJdbcUrl(jdbcUrl)) {
             return;
         }
         if (databaseUrl == null || databaseUrl.isBlank()) {
@@ -65,6 +66,11 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
 
     private String decode(String value) {
         return URLDecoder.decode(value, StandardCharsets.UTF_8);
+    }
+
+    private boolean isLocalhostJdbcUrl(String value) {
+        String normalized = value.toLowerCase(Locale.ROOT);
+        return normalized.contains("localhost") || normalized.contains("127.0.0.1");
     }
 
     @Override
